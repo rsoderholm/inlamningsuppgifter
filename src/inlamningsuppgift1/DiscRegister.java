@@ -1,15 +1,15 @@
 package inlamningsuppgift1;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscRegister {
-	private Movie[] movieArr;
+	private List<Movie> movieArr = new ArrayList<Movie>();
 
-	public Movie[] getArray() {
+	public List<Movie> getArray() {
 		return movieArr;
 	}
 
@@ -17,40 +17,20 @@ public class DiscRegister {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));
-			br.mark(1000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		int nbrOfLines = 0;
+		
 		String line;
-
-		try {
-			while ((line = br.readLine()) != null) {
-				nbrOfLines++;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		movieArr = new Movie[nbrOfLines];
-
-		try {
-			br.reset();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		int i = 0;
+		
 		try {
 			while ((line = br.readLine()) != null) {
 
 				String[] part = line.split(",");
 				String[] actors = part[4].split("_");
 
-				movieArr[i] = new Movie(part[0], part[1], part[2], part[3],
-						actors, Integer.parseInt(part[5]),
-						Double.parseDouble(part[6]));
-				i++;
+				movieArr.add(new Movie(part[0], part[1], part[2], part[3],
+						actors, Integer.parseInt(part[5]),Double.parseDouble(part[6])));
 			}
 			br.close();
 		} catch (IOException e) {
@@ -58,14 +38,43 @@ public class DiscRegister {
 		}
 	}
 
-	public void saveFile() {
-		// TODO Auto-generated method stub
-		
+	public void saveFile(File file) {
+		BufferedWriter writer = null;
+		try {
+			writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8);
+			
+			for(int i = 0; i < movieArr.size(); i++){
+				String str = "";
+				Movie movie = movieArr.get(i);
+				str += movie.getTitle() + "," + movie.getGenre() + "," + 
+						movie.getType() + "," + movie.getDirector() + ",";
+				
+				String[] actors = movie.getActors();
+				for(int act = 0; act < actors.length; act++){
+					if(act < actors.length-1){
+						str += actors[act] + "_";
+					}else{
+						str += actors[act] + ",";
+					}
+				}				
+				str += movie.getLength() + "," + movie.getRating();
+				writer.write(str);
+				writer.newLine();
+			}
+			
+		} catch (IOException ex) {
+			// report
+		} finally {
+			try {
+				writer.close();
+			} catch (Exception ex) {
+			}
+		}
+
 	}
 	
-	@Override
-	public String toString() {
-		return "DiscRegister [movieArr=" + Arrays.toString(movieArr) + "]";
+	public void deleteMovie(int selectedIndex) {
+		movieArr.remove(selectedIndex);
 	}
 
 }

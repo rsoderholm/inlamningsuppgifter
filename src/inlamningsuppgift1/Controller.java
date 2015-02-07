@@ -2,36 +2,40 @@ package inlamningsuppgift1;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 public class Controller {
 	private DiscRegister register;
 
 	public Controller(DiscRegister register) {
-		this.register = register;
-		
+		this.register = register;		
 	}
 
 	public void loadFile(File file) {
 		register.loadFile(file);
 	}
 
-	public void saveFile() {
-		register.saveFile();
+	public void saveFile(File file) {
+		register.saveFile(file);
 	}
 
+	public void deleteMovie(int selectedIndex) {
+		register.deleteMovie(selectedIndex);		
+	}
+	
 	public void shuffleList() {
-		Movie movieArr[] = register.getArray();
-		if (movieArr != null) {
+		List<Movie> movieArr = register.getArray();
+		if (!(movieArr.isEmpty())) {
 			Movie temp;
 			Random rand = new Random();
 			int pos;
 
-			for (int i = 0; i < movieArr.length; i++) {
-				pos = rand.nextInt(movieArr.length);
-				temp = movieArr[i];
-				movieArr[i] = movieArr[pos];
-				movieArr[pos] = temp;
+			for (int i = 0; i < movieArr.size(); i++) {
+				pos = rand.nextInt(movieArr.size());
+				temp = movieArr.get(i);
+				movieArr.set(i, movieArr.get(pos));
+				movieArr.set(pos, temp);
 			}
 		}
 	}
@@ -41,11 +45,11 @@ public class Controller {
 	}
 
 	public String[] getlistAsText() {
-		Movie movieArr[] = register.getArray();
-		if (movieArr != null) {
-			String str[] = new String[movieArr.length];
-			for (int i = 0; i < movieArr.length; i++) {
-				str[i] = movieArr[i].getTitle() + "[" + movieArr[i].getType()
+		List<Movie> movieArr= register.getArray();
+		if (!(movieArr.isEmpty())) {
+			String str[] = new String[movieArr.size()];
+			for (int i = 0; i < movieArr.size(); i++) {
+				str[i] = movieArr.get(i).getTitle() + "[" + movieArr.get(i).getType()
 						+ "]";
 			}
 			return str;
@@ -56,7 +60,7 @@ public class Controller {
 	}
 
 	public String[][] getMovieInfo(int selection) {
-		Movie movie = register.getArray()[selection];
+		Movie movie = register.getArray().get(selection);
 		String str[][] = new String[7][10];
 		str[0][0] = movie.getTitle();
 		str[1][0] = movie.getGenre();
@@ -69,4 +73,5 @@ public class Controller {
 		return str;
 		
 	}
+
 }

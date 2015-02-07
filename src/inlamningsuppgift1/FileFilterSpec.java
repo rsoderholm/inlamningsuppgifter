@@ -33,7 +33,7 @@ public class FileFilterSpec extends FileFilter {
 	}
 
 	public String getDescription() {
-        return "Just .LOL Files";
+        return "Just .JONATHAN Files";
     }
 
 }

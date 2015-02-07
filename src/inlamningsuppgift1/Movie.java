@@ -92,5 +92,4 @@ public class Movie implements Comparable <Movie> {
 		return "Movie [title=" + title + ", type=" + type + "]";
 	}
 	
-	
 }

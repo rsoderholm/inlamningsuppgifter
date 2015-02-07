@@ -133,12 +133,18 @@ public class GUI extends JPanel {
 				if (returnVal == JFileChooser.APPROVE_OPTION){
 					File file = fc.getSelectedFile();
 					controller.loadFile(file);
+					movieList.removeAll();
 					movieList.setListData(controller.getlistAsText());
 				}
 				
 				
 			} else if (menuSave == e.getSource()) {
-				controller.saveFile();
+				int returnVal = fc.showSaveDialog(GUI.this);
+				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					File file = fc.getSelectedFile();
+					controller.saveFile(file);
+				}
 				
 			} else if (menuSortList == e.getSource()) {
 				Comparator<Movie> comp = null;
@@ -185,7 +191,9 @@ public class GUI extends JPanel {
 				// TODO
 
 			} else if (btnDelete == e.getSource()) {
-				// TODO
+				controller.deleteMovie(movieList.getSelectedIndex());
+				movieList.removeAll();
+				movieList.setListData(controller.getlistAsText());
 
 			}
 
