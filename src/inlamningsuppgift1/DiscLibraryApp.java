@@ -8,11 +8,12 @@ public class DiscLibraryApp {
 		Controller controller = new Controller(register);
 		GUI gui = new GUI(controller);
 		
-		JFrame frame = new JFrame("Inlämningsuppgift 1 Jonathan Böcker");
+		JFrame frame = new JFrame("Inlämningsuppgift 1");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(gui);
 		frame.pack();
 		frame.setVisible(true);
+		frame.setLocationRelativeTo(null);
 	}
 
 }

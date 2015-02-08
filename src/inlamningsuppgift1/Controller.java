@@ -21,7 +21,19 @@ public class Controller {
 	}
 
 	public void deleteMovie(int selectedIndex) {
-		register.deleteMovie(selectedIndex);		
+		List<Movie> movieArr = register.getArray();
+		movieArr.remove(selectedIndex);
+	}
+	
+	public void deleteAll() {
+		List<Movie> movieArr = register.getArray();
+		movieArr.clear();
+	}
+	
+	public Movie addMovie() {
+		List<Movie> movieArr = register.getArray();
+		movieArr.add(new Movie("This field is required", "This field is required"));
+		return movieArr.get(movieArr.size() -1);
 	}
 	
 	public void shuffleList() {
@@ -59,18 +71,9 @@ public class Controller {
 		}
 	}
 
-	public String[][] getMovieInfo(int selection) {
-		Movie movie = register.getArray().get(selection);
-		String str[][] = new String[7][10];
-		str[0][0] = movie.getTitle();
-		str[1][0] = movie.getGenre();
-		str[2][0] = movie.getType();
-		str[3][0] = movie.getDirector();
-		str[4] = movie.getActors();
-		str[5][0] = movie.getLength() + "";
-		str[6][0] = movie.getRating() + "";
-		
-		return str;
+	public Movie getMovie(int selection) {
+		Movie movie = register.getArray().get(selection);		
+		return movie;
 		
 	}
 

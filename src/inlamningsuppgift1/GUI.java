@@ -15,12 +15,16 @@ public class GUI extends JPanel {
 	private JList<String> movieList;
 	private JScrollPane spMovieList;
 	private JMenuBar menuBar;
-	private JMenu menuFile, menuSort, menuSortKind, menuSortWay;
-	private JMenuItem menuLoad, menuSave, menuSortList, menuShuffle;
+	private JMenu menuFile, menuNew, menuEdit, menuSort, menuSortKind,
+			menuSortWay;
+	private JMenuItem menuNewFile, menuNewMovie, menuLoad, menuSave,
+			menuSaveAs, menuSortList, menuShuffle, menuEditInfo,
+			menuEditDelete;
 	private JRadioButtonMenuItem rbMenuTitle, rbMenuGenre, rbMenuType,
 			rbMenuDirector, rbMenuLength, rbMenuRating;
 	private JRadioButtonMenuItem rbMenuAsc, rbMenuDesc;
-	private JButton btnDelete, btnAdd, btnInfo;
+	private JButton btnSearch, btnGoBack;
+	private JTextField tfSearch;
 	private JPanel pnlButtons, pnlNorth;
 	final JFileChooser fc = new JFileChooser();
 
@@ -32,23 +36,38 @@ public class GUI extends JPanel {
 		// Menu stuff
 		menuBar = new JMenuBar();
 		menuFile = new JMenu("File");
+		menuNew = new JMenu("New");
+		menuEdit = new JMenu("Edit");
 		menuSort = new JMenu("Sort");
 		menuSortList = new JMenuItem("Sort List");
 		menuShuffle = new JMenuItem("Shuffle List");
 		menuSortKind = new JMenu("Sort by");
 		menuSortWay = new JMenu("Sort Asc or Desc");
+		menuNewFile = new JMenuItem("New List");
+		menuNewMovie = new JMenuItem("New Movie");
+		menuLoad = new JMenuItem("Open File");
+		menuSave = new JMenuItem("Save");
+		menuSaveAs = new JMenuItem("Save As");
+		menuEditInfo = new JMenuItem("Info");
+		menuEditDelete = new JMenuItem("Delete");
 		menuBar.add(menuFile);
+		menuBar.add(menuEdit);
 		menuBar.add(menuSort);
 		menuBar.add(Box.createHorizontalGlue());
-		menuLoad = new JMenuItem("Load File");
-		menuSave = new JMenuItem("Save File");
+		menuFile.add(menuNew);
 		menuFile.add(menuLoad);
-		menuFile.add(menuSave);
 		menuFile.addSeparator();
+		menuFile.add(menuSave);
+		menuFile.add(menuSaveAs);
+		menuEdit.add(menuEditInfo);
+		menuEdit.add(menuEditDelete);
 		menuSort.add(menuSortList);
 		menuSort.add(menuShuffle);
 		menuSort.add(menuSortKind);
 		menuSort.add(menuSortWay);
+
+		menuNew.add(menuNewFile);
+		menuNew.add(menuNewMovie);
 
 		// Radiobuttons in submenu
 		ButtonGroup groupKind = new ButtonGroup();
@@ -87,17 +106,17 @@ public class GUI extends JPanel {
 		spMovieList = new JScrollPane(movieList);
 
 		// Panel with quickbuttons
-		btnInfo = new JButton("Info");
-		btnAdd = new JButton("Add Movie");
-		btnDelete = new JButton("Delete Movie");
+		btnGoBack = new JButton("Go back");
+		btnSearch = new JButton("Search");
+		tfSearch = new JTextField();
 		pnlButtons = new JPanel();
 		pnlButtons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		pnlButtons.setLayout(new BoxLayout(pnlButtons, BoxLayout.X_AXIS));
-		pnlButtons.add(btnInfo);
+		pnlButtons.add(btnGoBack);
 		pnlButtons.add(Box.createRigidArea(new Dimension(5, 0)));
-		pnlButtons.add(btnAdd);
+		pnlButtons.add(btnSearch);
 		pnlButtons.add(Box.createRigidArea(new Dimension(5, 0)));
-		pnlButtons.add(btnDelete);
+		pnlButtons.add(tfSearch);
 		pnlButtons.add(Box.createHorizontalGlue());
 
 		// The north panel
@@ -111,16 +130,37 @@ public class GUI extends JPanel {
 
 		// ActionListeners
 		btnListener = new ButtonListener();
+		menuNewFile.addActionListener(btnListener);
 		menuLoad.addActionListener(btnListener);
 		menuSave.addActionListener(btnListener);
+		menuSaveAs.addActionListener(btnListener);
+		menuEditInfo.addActionListener(btnListener);
+		menuEditDelete.addActionListener(btnListener);
 		menuSortList.addActionListener(btnListener);
 		menuShuffle.addActionListener(btnListener);
-		btnInfo.addActionListener(btnListener);
-		btnAdd.addActionListener(btnListener);
-		btnDelete.addActionListener(btnListener);
-		
+		menuNewMovie.addActionListener(btnListener);
+		btnGoBack.addActionListener(btnListener);
+		btnSearch.addActionListener(btnListener);
+
 		// File chooser stuff
 		fc.setFileFilter(new FileFilterSpec());
+		
+		// Set enabled/disabled
+		menuSave.setEnabled(false);
+		btnGoBack.setEnabled(false);
+	}
+
+	public void update() {
+		movieList.removeAll();
+		movieList.setListData(controller.getlistAsText());
+	}
+
+	public void popup(Movie movie) {
+		JFrame frame = new JFrame("Info");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.add(new MovieInfoPanel(movie, GUI.this));
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -129,23 +169,50 @@ public class GUI extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			if (menuLoad == e.getSource()) {
 				int returnVal = fc.showOpenDialog(GUI.this);
-				
-				if (returnVal == JFileChooser.APPROVE_OPTION){
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					controller.loadFile(file);
-					movieList.removeAll();
-					movieList.setListData(controller.getlistAsText());
+					update();
+					menuSave.setEnabled(true);
+					
+					Component c = getParent();					
+			        while( c.getParent() != null ) {
+			            c = c.getParent();
+			        }			   
+			        Frame topFrame = ( Frame )c;
+			        topFrame.setTitle( fc.getName(file) );
 				}
-				
-				
+
 			} else if (menuSave == e.getSource()) {
+				File file = fc.getSelectedFile();
+				controller.saveFile(file);
+
+			} else if (menuSaveAs == e.getSource()) {
 				int returnVal = fc.showSaveDialog(GUI.this);
-				
-				if(returnVal == JFileChooser.APPROVE_OPTION){
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					controller.saveFile(file);
+					menuSave.setEnabled(true);
+					
+					Component c = getParent();
+					while( c.getParent() != null ) {
+			            c = c.getParent();
+			        }			   
+			        Frame topFrame = ( Frame )c;
+			        topFrame.setTitle( fc.getName(file) );
 				}
-				
+
+			} else if (menuNewFile == e.getSource()) {
+				int answer = JOptionPane
+						.showConfirmDialog(movieList,
+								"Are you sure you want to create a new file?\nDo not forget to save the current file");
+				if (answer == JOptionPane.YES_OPTION) {
+					controller.deleteAll();
+					update();
+					menuSave.setEnabled(false);					
+				}
 			} else if (menuSortList == e.getSource()) {
 				Comparator<Movie> comp = null;
 
@@ -175,26 +242,39 @@ public class GUI extends JPanel {
 					comp = new RatingDesc();
 
 				controller.sortList(comp);
-				movieList.removeAll();
-				movieList.setListData(controller.getlistAsText());
+				update();
 
 			} else if (menuShuffle == e.getSource()) {
 				controller.shuffleList();
-				movieList.removeAll();
-				movieList.setListData(controller.getlistAsText());
-			} else if (btnInfo == e.getSource()) {
-				int selected = movieList.getSelectedIndex();
-				String str[][] = controller.getMovieInfo(selected);
-				JOptionPane.showMessageDialog(spMovieList, new MovieInfoPanel(str));
+				update();
+				
+			} else if (menuEditInfo == e.getSource()) {
+				if (movieList.getSelectedIndex() >= 0) {
+					int selected = movieList.getSelectedIndex();
+					popup(controller.getMovie(selected));
+				}
 
-			} else if (btnAdd == e.getSource()) {
-				// TODO
+			} else if (menuNewMovie == e.getSource()) {
+				popup(controller.addMovie());
 
-			} else if (btnDelete == e.getSource()) {
-				controller.deleteMovie(movieList.getSelectedIndex());
-				movieList.removeAll();
-				movieList.setListData(controller.getlistAsText());
-
+			} else if (menuEditDelete == e.getSource()) {
+				int answer = JOptionPane.showConfirmDialog(movieList,
+						"Are you sure you want to delete this movie?");
+				if ((movieList.getSelectedIndex() >= 0)
+						&& (answer == JOptionPane.YES_OPTION)) {
+					controller.deleteMovie(movieList.getSelectedIndex());
+					update();
+				}
+			} else if (btnSearch == e.getSource()){
+				tfSearch.setEnabled(false);
+				btnSearch.setEnabled(false);
+				btnGoBack.setEnabled(true);
+				
+			} else if (btnGoBack == e.getSource()){
+				tfSearch.setEnabled(true);
+				btnSearch.setEnabled(true);
+				btnGoBack.setEnabled(false);
+				
 			}
 
 		}

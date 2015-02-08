@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class DiscRegister {
 	private List<Movie> movieArr = new ArrayList<Movie>();
 
@@ -14,6 +16,8 @@ public class DiscRegister {
 	}
 
 	public void loadFile(File file) {
+		movieArr.clear();
+		
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));
@@ -34,7 +38,9 @@ public class DiscRegister {
 			}
 			br.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "File could not be loaded");
+		} catch (NumberFormatException e){
+			JOptionPane.showMessageDialog(null, "File is not correctly formatted or corrupt");
 		}
 	}
 
@@ -71,10 +77,6 @@ public class DiscRegister {
 			}
 		}
 
-	}
-	
-	public void deleteMovie(int selectedIndex) {
-		movieArr.remove(selectedIndex);
 	}
 
 }
