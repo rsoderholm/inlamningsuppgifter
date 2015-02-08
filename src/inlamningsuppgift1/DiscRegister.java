@@ -20,7 +20,7 @@ public class DiscRegister {
 		
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(file));
+			br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
