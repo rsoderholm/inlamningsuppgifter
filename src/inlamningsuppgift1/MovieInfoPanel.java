@@ -42,7 +42,7 @@ public class MovieInfoPanel extends JPanel {
 		lblArray[6] = new JLabel("Rating:");
 
 		for (int i = 0; i < lblArray.length; i++) {
-			lblArray[i].setSize(50, 25);
+			lblArray[i].setSize(50, 30);
 		}
 
 		tfArray = new JTextField[7];

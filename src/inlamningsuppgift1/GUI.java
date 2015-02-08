@@ -1,6 +1,8 @@
 package inlamningsuppgift1;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,11 +15,11 @@ public class GUI extends JPanel {
 	private Controller controller;
 	private ButtonListener btnListener;
 	private JList<String> movieList;
-	private JScrollPane spMovieList;
+	private JScrollPane spMovieList, spMovieInfo;
 	private JMenuBar menuBar;
 	private JMenu menuFile, menuNew, menuEdit, menuSort, menuSortKind,
 			menuSortWay;
-	private JMenuItem menuNewFile, menuNewMovie, menuLoad, menuSave,
+	private JMenuItem menuNewFile, menuNewMovie, menuLoad, menuRefresh,  menuSave,
 			menuSaveAs, menuSortList, menuShuffle, menuEditInfo,
 			menuEditDelete;
 	private JRadioButtonMenuItem rbMenuTitle, rbMenuGenre, rbMenuType,
@@ -25,7 +27,8 @@ public class GUI extends JPanel {
 	private JRadioButtonMenuItem rbMenuAsc, rbMenuDesc;
 	private JButton btnSearch, btnGoBack;
 	private JTextField tfSearch;
-	private JPanel pnlButtons, pnlNorth;
+	private JPanel pnlButtons, pnlNorth, pnlCenter, pnlEast, pnlInfoStatic, pnlInfo;
+	private JLabel[] lblInfoStatic, lblInfo;
 	final JFileChooser fc = new JFileChooser();
 
 	public GUI(Controller controller) {
@@ -46,6 +49,7 @@ public class GUI extends JPanel {
 		menuNewFile = new JMenuItem("New List");
 		menuNewMovie = new JMenuItem("New Movie");
 		menuLoad = new JMenuItem("Open File");
+		menuRefresh = new JMenuItem("Refresh");
 		menuSave = new JMenuItem("Save");
 		menuSaveAs = new JMenuItem("Save As");
 		menuEditInfo = new JMenuItem("Info");
@@ -56,6 +60,8 @@ public class GUI extends JPanel {
 		menuBar.add(Box.createHorizontalGlue());
 		menuFile.add(menuNew);
 		menuFile.add(menuLoad);
+		menuFile.addSeparator();
+		menuFile.add(menuRefresh);
 		menuFile.addSeparator();
 		menuFile.add(menuSave);
 		menuFile.add(menuSaveAs);
@@ -119,19 +125,54 @@ public class GUI extends JPanel {
 		pnlButtons.add(tfSearch);
 		pnlButtons.add(Box.createHorizontalGlue());
 
+		// The Center panel
+		pnlCenter = new JPanel(new BorderLayout());
+		pnlEast = new JPanel(new BorderLayout(0, 0));		
+		pnlInfoStatic = new JPanel();
+		pnlInfoStatic.setLayout(new BoxLayout(pnlInfoStatic, BoxLayout.Y_AXIS));
+		pnlInfo = new JPanel();
+		pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
+		spMovieInfo = new JScrollPane(pnlInfo);
+		
+		pnlEast.add(pnlInfo, BorderLayout.CENTER);
+		pnlEast.add(pnlInfoStatic, BorderLayout.WEST);
+		spMovieInfo = new JScrollPane(pnlEast);
+		pnlCenter.add(spMovieInfo, BorderLayout.CENTER);
+		pnlCenter.add(spMovieList, BorderLayout.WEST);
+		
+		// Info Panel		
+		lblInfoStatic = new JLabel[7];
+		lblInfoStatic[0] = new JLabel("Title: ");
+		lblInfoStatic[1] = new JLabel("Genre: ");
+		lblInfoStatic[2] = new JLabel("Type: ");
+		lblInfoStatic[3] = new JLabel("Director: ");
+		lblInfoStatic[4] = new JLabel("Actors: ");
+		lblInfoStatic[5] = new JLabel("Length[minutes]: ");
+		lblInfoStatic[6] = new JLabel("Rating:");
+		
+		lblInfo = new JLabel[7];
+		
+		for(int i = 0; i < lblInfoStatic.length; i++){
+			pnlInfoStatic.add(lblInfoStatic[i]);
+			lblInfo[i] = new JLabel();
+			pnlInfo.add(lblInfo[i]);
+		}
+		
 		// The north panel
 		pnlNorth = new JPanel();
 		pnlNorth.setLayout(new BoxLayout(pnlNorth, BoxLayout.Y_AXIS));
 		pnlNorth.add(menuBar);
 		pnlNorth.add(pnlButtons);
 
-		add(spMovieList, BorderLayout.CENTER);
-		add(pnlNorth, BorderLayout.NORTH);
+		// Main Panel
+		add(pnlCenter, BorderLayout.CENTER);
+		add(pnlNorth, BorderLayout.NORTH);		
 
 		// ActionListeners
 		btnListener = new ButtonListener();
 		menuNewFile.addActionListener(btnListener);
 		menuLoad.addActionListener(btnListener);
+		menuRefresh.addActionListener(btnListener);
 		menuSave.addActionListener(btnListener);
 		menuSaveAs.addActionListener(btnListener);
 		menuEditInfo.addActionListener(btnListener);
@@ -141,12 +182,15 @@ public class GUI extends JPanel {
 		menuNewMovie.addActionListener(btnListener);
 		btnGoBack.addActionListener(btnListener);
 		btnSearch.addActionListener(btnListener);
+		
+		movieList.addListSelectionListener(new SelectionListener());
 
 		// File chooser stuff
 		fc.setFileFilter(new FileFilterSpec());
 		
 		// Set enabled/disabled
 		menuSave.setEnabled(false);
+		menuRefresh.setEnabled(false);
 		btnGoBack.setEnabled(false);
 	}
 
@@ -162,6 +206,36 @@ public class GUI extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
+	private class SelectionListener implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if ((movieList == e.getSource()) && (movieList.getSelectedIndex() >= 0)){
+				Movie movie = controller.getMovie(movieList.getSelectedIndex());
+				
+				lblInfo[0].setText(movie.getTitle());
+				lblInfo[1].setText(movie.getGenre());
+				lblInfo[2].setText(movie.getType());
+				lblInfo[3].setText(movie.getDirector());
+
+				String temp = "";
+				String[] actors = movie.getActors();
+				for (int i = 0; i < actors.length; i++) {
+					if(i < actors.length - 1)
+						temp += actors[i] + ", ";
+					else
+						temp += actors[i];
+				}
+
+				lblInfo[4].setText(temp);
+				lblInfo[5].setText(movie.getLength() + "");
+				lblInfo[6].setText(movie.getRating() + "");
+			}
+			
+		}
+		
+	}
 
 	private class ButtonListener implements ActionListener {
 
@@ -174,7 +248,9 @@ public class GUI extends JPanel {
 					File file = fc.getSelectedFile();
 					controller.loadFile(file);
 					update();
+					
 					menuSave.setEnabled(true);
+					menuRefresh.setEnabled(true);
 					
 					Component c = getParent();					
 			        while( c.getParent() != null ) {
@@ -184,7 +260,12 @@ public class GUI extends JPanel {
 			        topFrame.setTitle( fc.getName(file) );
 				}
 
-			} else if (menuSave == e.getSource()) {
+			} else if (menuRefresh == e.getSource()) {
+				File file = fc.getSelectedFile();
+				controller.loadFile(file);
+				update();
+				
+			}else if (menuSave == e.getSource()) {
 				File file = fc.getSelectedFile();
 				controller.saveFile(file);
 
@@ -195,6 +276,7 @@ public class GUI extends JPanel {
 					File file = fc.getSelectedFile();
 					controller.saveFile(file);
 					menuSave.setEnabled(true);
+					menuRefresh.setEnabled(true);
 					
 					Component c = getParent();
 					while( c.getParent() != null ) {
@@ -256,6 +338,7 @@ public class GUI extends JPanel {
 
 			} else if (menuNewMovie == e.getSource()) {
 				popup(controller.addMovie());
+				update();
 
 			} else if (menuEditDelete == e.getSource()) {
 				int answer = JOptionPane.showConfirmDialog(movieList,

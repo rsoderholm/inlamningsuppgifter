@@ -25,8 +25,9 @@ public class DiscLibraryApp {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(gui);
 		frame.pack();
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH );
 		frame.setVisible(true);
-		frame.setLocationRelativeTo(null);
+		
 	}
 
 }
