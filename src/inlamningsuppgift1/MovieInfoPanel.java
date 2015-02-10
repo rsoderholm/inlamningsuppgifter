@@ -26,7 +26,7 @@ public class MovieInfoPanel extends JPanel {
 		this.gui = gui;
 		this.movie = movie;
 
-		setPreferredSize(new Dimension(350, 200));
+		setPreferredSize(new Dimension(350, 250));
 		setLayout(new BorderLayout(5, 5));
 		pnlInfo = new JPanel(new GridLayout(7, 1));
 		pnlLabels = new JPanel(new GridLayout(7, 1));
@@ -40,10 +40,6 @@ public class MovieInfoPanel extends JPanel {
 		lblArray[4] = new JLabel("Actors: ");
 		lblArray[5] = new JLabel("Length[minutes]:");
 		lblArray[6] = new JLabel("Rating:");
-
-		for (int i = 0; i < lblArray.length; i++) {
-			lblArray[i].setSize(50, 30);
-		}
 
 		tfArray = new JTextField[7];
 		tfArray[0] = new JTextField(movie.getTitle());
@@ -65,6 +61,8 @@ public class MovieInfoPanel extends JPanel {
 		tfArray[6] = new JTextField(movie.getRating() + "");
 
 		for (int i = 0; i < tfArray.length; i++) {
+			lblArray[i].setSize(new Dimension(50, 35));
+			tfArray[i].setSize(new Dimension(50, 35));
 			pnlLabels.add(lblArray[i]);
 			pnlInfo.add(tfArray[i]);
 		}

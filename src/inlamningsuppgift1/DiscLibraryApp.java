@@ -15,7 +15,7 @@ public class DiscLibraryApp {
 		        }
 		    }
 		} catch (Exception e) {
-		    // If Nimbus is not available, you can set the GUI to another look and feel.
+		  
 		}
 		DiscRegister register = new DiscRegister();		
 		Controller controller = new Controller(register);

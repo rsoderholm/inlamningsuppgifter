@@ -16,18 +16,21 @@ public class GUI extends JPanel {
 	private ButtonListener btnListener;
 	private JList<String> movieList;
 	private JScrollPane spMovieList, spMovieInfo;
+	private JSplitPane splitPane;
 	private JMenuBar menuBar;
 	private JMenu menuFile, menuNew, menuEdit, menuSort, menuSortKind,
-			menuSortWay;
-	private JMenuItem menuNewFile, menuNewMovie, menuLoad, menuRefresh,  menuSave,
-			menuSaveAs, menuSortList, menuShuffle, menuEditInfo,
+			menuSortWay, menuAlgorithm, menuSearch;
+	private JMenuItem menuNewFile, menuNewMovie, menuLoad, menuRefresh,
+			menuSave, menuSaveAs, menuSortList, menuShuffle, menuEditInfo,
 			menuEditDelete;
 	private JRadioButtonMenuItem rbMenuTitle, rbMenuGenre, rbMenuType,
-			rbMenuDirector, rbMenuLength, rbMenuRating;
+			rbMenuDirector, rbMenuLength, rbMenuRating, rbMenuQuicksort,
+			rbMenuBubblesort, rbMenuLinear, rbMenuBinary;
 	private JRadioButtonMenuItem rbMenuAsc, rbMenuDesc;
 	private JButton btnSearch, btnGoBack;
 	private JTextField tfSearch;
-	private JPanel pnlButtons, pnlNorth, pnlCenter, pnlEast, pnlInfoStatic, pnlInfo;
+	private JPanel pnlButtons, pnlNorth, pnlCenter, pnlEast, pnlInfoStatic,
+			pnlInfo;
 	private JLabel[] lblInfoStatic, lblInfo;
 	final JFileChooser fc = new JFileChooser();
 
@@ -42,10 +45,12 @@ public class GUI extends JPanel {
 		menuNew = new JMenu("New");
 		menuEdit = new JMenu("Edit");
 		menuSort = new JMenu("Sort");
+		menuSearch = new JMenu("Search");
 		menuSortList = new JMenuItem("Sort List");
 		menuShuffle = new JMenuItem("Shuffle List");
 		menuSortKind = new JMenu("Sort by");
 		menuSortWay = new JMenu("Sort Asc or Desc");
+		menuAlgorithm = new JMenu("Algorithm");
 		menuNewFile = new JMenuItem("New List");
 		menuNewMovie = new JMenuItem("New Movie");
 		menuLoad = new JMenuItem("Open File");
@@ -54,10 +59,16 @@ public class GUI extends JPanel {
 		menuSaveAs = new JMenuItem("Save As");
 		menuEditInfo = new JMenuItem("Info");
 		menuEditDelete = new JMenuItem("Delete");
+		// Menu bar
 		menuBar.add(menuFile);
+		menuBar.add(Box.createRigidArea(new Dimension(3, 0)));
 		menuBar.add(menuEdit);
+		menuBar.add(Box.createRigidArea(new Dimension(3, 0)));
 		menuBar.add(menuSort);
+		menuBar.add(Box.createRigidArea(new Dimension(3, 0)));
+		menuBar.add(menuSearch);
 		menuBar.add(Box.createHorizontalGlue());
+		// File menu
 		menuFile.add(menuNew);
 		menuFile.add(menuLoad);
 		menuFile.addSeparator();
@@ -65,17 +76,20 @@ public class GUI extends JPanel {
 		menuFile.addSeparator();
 		menuFile.add(menuSave);
 		menuFile.add(menuSaveAs);
+		// Edit menu
 		menuEdit.add(menuEditInfo);
 		menuEdit.add(menuEditDelete);
+		// Sort menu
 		menuSort.add(menuSortList);
 		menuSort.add(menuShuffle);
 		menuSort.add(menuSortKind);
 		menuSort.add(menuSortWay);
-
+		menuSort.add(menuAlgorithm);
+		// Submenu new
 		menuNew.add(menuNewFile);
 		menuNew.add(menuNewMovie);
 
-		// Radiobuttons in submenu
+		// Radiobuttons sort menu
 		ButtonGroup groupKind = new ButtonGroup();
 		rbMenuTitle = new JRadioButtonMenuItem("Title");
 		rbMenuGenre = new JRadioButtonMenuItem("Genre");
@@ -97,7 +111,7 @@ public class GUI extends JPanel {
 		menuSortKind.add(rbMenuRating);
 		rbMenuTitle.setSelected(true);
 
-		// Radiobuttons in another sidemenu
+		// Radiobuttons in "way" menu
 		ButtonGroup groupWay = new ButtonGroup();
 		rbMenuAsc = new JRadioButtonMenuItem("Ascending");
 		rbMenuDesc = new JRadioButtonMenuItem("Descending");
@@ -106,6 +120,26 @@ public class GUI extends JPanel {
 		menuSortWay.add(rbMenuAsc);
 		menuSortWay.add(rbMenuDesc);
 		rbMenuAsc.setSelected(true);
+
+		// Radiobuttons in algorithm menu
+		ButtonGroup groupAlgorithm = new ButtonGroup();
+		rbMenuQuicksort = new JRadioButtonMenuItem("Quicksort");
+		rbMenuBubblesort = new JRadioButtonMenuItem("Bubblesort");
+		groupAlgorithm.add(rbMenuQuicksort);
+		groupAlgorithm.add(rbMenuBubblesort);
+		menuAlgorithm.add(rbMenuQuicksort);
+		menuAlgorithm.add(rbMenuBubblesort);
+		rbMenuQuicksort.setSelected(true);
+		
+		//Radiobuttons in search menu
+		ButtonGroup groupSearch = new ButtonGroup();
+		rbMenuLinear = new JRadioButtonMenuItem("Linear Search");
+		rbMenuBinary = new JRadioButtonMenuItem("Binary Search");
+		groupSearch.add(rbMenuLinear);
+		groupSearch.add(rbMenuBinary);
+		menuSearch.add(rbMenuLinear);
+		menuSearch.add(rbMenuBinary);
+		rbMenuLinear.setSelected(true);
 
 		// Main window with movielist
 		movieList = new JList<>();
@@ -127,20 +161,21 @@ public class GUI extends JPanel {
 
 		// The Center panel
 		pnlCenter = new JPanel(new BorderLayout());
-		pnlEast = new JPanel(new BorderLayout(0, 0));		
+		pnlEast = new JPanel(new BorderLayout(0, 0));
 		pnlInfoStatic = new JPanel();
 		pnlInfoStatic.setLayout(new BoxLayout(pnlInfoStatic, BoxLayout.Y_AXIS));
 		pnlInfo = new JPanel();
 		pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
 		spMovieInfo = new JScrollPane(pnlInfo);
-		
+
 		pnlEast.add(pnlInfo, BorderLayout.CENTER);
 		pnlEast.add(pnlInfoStatic, BorderLayout.WEST);
 		spMovieInfo = new JScrollPane(pnlEast);
-		pnlCenter.add(spMovieInfo, BorderLayout.CENTER);
-		pnlCenter.add(spMovieList, BorderLayout.WEST);
-		
-		// Info Panel		
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, spMovieList,
+				spMovieInfo);
+		pnlCenter.add(splitPane, BorderLayout.CENTER);
+
+		// Info Panel
 		lblInfoStatic = new JLabel[7];
 		lblInfoStatic[0] = new JLabel("Title: ");
 		lblInfoStatic[1] = new JLabel("Genre: ");
@@ -149,15 +184,15 @@ public class GUI extends JPanel {
 		lblInfoStatic[4] = new JLabel("Actors: ");
 		lblInfoStatic[5] = new JLabel("Length[minutes]: ");
 		lblInfoStatic[6] = new JLabel("Rating:");
-		
+
 		lblInfo = new JLabel[7];
-		
-		for(int i = 0; i < lblInfoStatic.length; i++){
+
+		for (int i = 0; i < lblInfoStatic.length; i++) {
 			pnlInfoStatic.add(lblInfoStatic[i]);
 			lblInfo[i] = new JLabel();
 			pnlInfo.add(lblInfo[i]);
 		}
-		
+
 		// The north panel
 		pnlNorth = new JPanel();
 		pnlNorth.setLayout(new BoxLayout(pnlNorth, BoxLayout.Y_AXIS));
@@ -166,7 +201,7 @@ public class GUI extends JPanel {
 
 		// Main Panel
 		add(pnlCenter, BorderLayout.CENTER);
-		add(pnlNorth, BorderLayout.NORTH);		
+		add(pnlNorth, BorderLayout.NORTH);
 
 		// ActionListeners
 		btnListener = new ButtonListener();
@@ -182,12 +217,12 @@ public class GUI extends JPanel {
 		menuNewMovie.addActionListener(btnListener);
 		btnGoBack.addActionListener(btnListener);
 		btnSearch.addActionListener(btnListener);
-		
+
 		movieList.addListSelectionListener(new SelectionListener());
 
 		// File chooser stuff
 		fc.setFileFilter(new FileFilterSpec());
-		
+
 		// Set enabled/disabled
 		menuSave.setEnabled(false);
 		menuRefresh.setEnabled(false);
@@ -196,7 +231,11 @@ public class GUI extends JPanel {
 
 	public void update() {
 		movieList.removeAll();
-		movieList.setListData(controller.getlistAsText());
+		if (controller.getlistAsText() != null)
+			movieList.setListData(controller.getlistAsText());
+		tfSearch.setEnabled(true);
+		btnSearch.setEnabled(true);
+		btnGoBack.setEnabled(false);
 	}
 
 	public void popup(Movie movie) {
@@ -206,14 +245,20 @@ public class GUI extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	private class SelectionListener implements ListSelectionListener {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			if ((movieList == e.getSource()) && (movieList.getSelectedIndex() >= 0)){
-				Movie movie = controller.getMovie(movieList.getSelectedIndex());
-				
+			if ((movieList == e.getSource())
+					&& (movieList.getSelectedIndex() >= 0)) {
+				Movie movie;
+				if (btnSearch.isEnabled())
+					movie = controller.getMovie(movieList.getSelectedIndex());
+				else
+					movie = controller.getMovieSearch(movieList
+							.getSelectedIndex());
+
 				lblInfo[0].setText(movie.getTitle());
 				lblInfo[1].setText(movie.getGenre());
 				lblInfo[2].setText(movie.getType());
@@ -222,7 +267,7 @@ public class GUI extends JPanel {
 				String temp = "";
 				String[] actors = movie.getActors();
 				for (int i = 0; i < actors.length; i++) {
-					if(i < actors.length - 1)
+					if (i < actors.length - 1)
 						temp += actors[i] + ", ";
 					else
 						temp += actors[i];
@@ -232,9 +277,9 @@ public class GUI extends JPanel {
 				lblInfo[5].setText(movie.getLength() + "");
 				lblInfo[6].setText(movie.getRating() + "");
 			}
-			
+
 		}
-		
+
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -248,24 +293,24 @@ public class GUI extends JPanel {
 					File file = fc.getSelectedFile();
 					controller.loadFile(file);
 					update();
-					
+
 					menuSave.setEnabled(true);
 					menuRefresh.setEnabled(true);
-					
-					Component c = getParent();					
-			        while( c.getParent() != null ) {
-			            c = c.getParent();
-			        }			   
-			        Frame topFrame = ( Frame )c;
-			        topFrame.setTitle( fc.getName(file) );
+
+					Component c = getParent();
+					while (c.getParent() != null) {
+						c = c.getParent();
+					}
+					Frame topFrame = (Frame) c;
+					topFrame.setTitle(fc.getName(file));
 				}
 
 			} else if (menuRefresh == e.getSource()) {
 				File file = fc.getSelectedFile();
 				controller.loadFile(file);
 				update();
-				
-			}else if (menuSave == e.getSource()) {
+
+			} else if (menuSave == e.getSource()) {
 				File file = fc.getSelectedFile();
 				controller.saveFile(file);
 
@@ -277,23 +322,24 @@ public class GUI extends JPanel {
 					controller.saveFile(file);
 					menuSave.setEnabled(true);
 					menuRefresh.setEnabled(true);
-					
+
 					Component c = getParent();
-					while( c.getParent() != null ) {
-			            c = c.getParent();
-			        }			   
-			        Frame topFrame = ( Frame )c;
-			        topFrame.setTitle( fc.getName(file) );
+					while (c.getParent() != null) {
+						c = c.getParent();
+					}
+					Frame topFrame = (Frame) c;
+					topFrame.setTitle(fc.getName(file));
 				}
 
 			} else if (menuNewFile == e.getSource()) {
 				int answer = JOptionPane
-						.showConfirmDialog(movieList,
+						.showConfirmDialog(
+								movieList,
 								"Are you sure you want to create a new file?\nDo not forget to save the current file");
 				if (answer == JOptionPane.YES_OPTION) {
 					controller.deleteAll();
 					update();
-					menuSave.setEnabled(false);					
+					menuSave.setEnabled(false);
 				}
 			} else if (menuSortList == e.getSource()) {
 				Comparator<Movie> comp = null;
@@ -323,17 +369,22 @@ public class GUI extends JPanel {
 				else if (rbMenuRating.isSelected() && rbMenuDesc.isSelected())
 					comp = new RatingDesc();
 
-				controller.sortList(comp);
+				if (rbMenuQuicksort.isSelected())
+					controller.sortListQuick(comp);
+				else if (rbMenuBubblesort.isSelected())
+					controller.sortListBubble(comp);
 				update();
 
 			} else if (menuShuffle == e.getSource()) {
 				controller.shuffleList();
 				update();
-				
+
 			} else if (menuEditInfo == e.getSource()) {
-				if (movieList.getSelectedIndex() >= 0) {
-					int selected = movieList.getSelectedIndex();
+				int selected = movieList.getSelectedIndex();
+				if (selected >= 0 && btnSearch.isEnabled()) {
 					popup(controller.getMovie(selected));
+				} else if (selected >= 0 && !(btnSearch.isEnabled())) {
+					popup(controller.getMovieSearch(selected));
 				}
 
 			} else if (menuNewMovie == e.getSource()) {
@@ -341,23 +392,48 @@ public class GUI extends JPanel {
 				update();
 
 			} else if (menuEditDelete == e.getSource()) {
-				int answer = JOptionPane.showConfirmDialog(movieList,
+				int selected = movieList.getSelectedIndex();
+				int answer = JOptionPane.NO_OPTION;
+				if(selected > -1){
+					answer = JOptionPane.showConfirmDialog(movieList,
 						"Are you sure you want to delete this movie?");
-				if ((movieList.getSelectedIndex() >= 0)
-						&& (answer == JOptionPane.YES_OPTION)) {
+				}else{
+					JOptionPane.showMessageDialog(null, "No movie selected");
+				}
+				
+				if ((selected >= 0) && (answer == JOptionPane.YES_OPTION)
+						&& btnSearch.isEnabled()) {
 					controller.deleteMovie(movieList.getSelectedIndex());
 					update();
+					
+				} else if ((selected >= 0)
+						&& (answer == JOptionPane.YES_OPTION && !(btnSearch
+								.isEnabled()))) {
+					
+					controller.deleteMovieSearch(movieList.getSelectedIndex());
+					update();
 				}
-			} else if (btnSearch == e.getSource()){
+				
+			} else if (btnSearch == e.getSource()) {
 				tfSearch.setEnabled(false);
 				btnSearch.setEnabled(false);
 				btnGoBack.setEnabled(true);
+				String[] str = null;
 				
-			} else if (btnGoBack == e.getSource()){
-				tfSearch.setEnabled(true);
-				btnSearch.setEnabled(true);
-				btnGoBack.setEnabled(false);
+				if(rbMenuLinear.isSelected())
+					str = controller.linearSearch(tfSearch.getText());
+				else if(rbMenuBinary.isSelected())
+					str = controller.binarySearch(tfSearch.getText());
 				
+				if (str != null)
+					movieList.setListData(str);
+				else {
+					movieList.removeAll();
+					movieList.setListData(new String[0]);
+				}
+
+			} else if (btnGoBack == e.getSource()) {				
+				update();
 			}
 
 		}

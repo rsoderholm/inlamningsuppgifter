@@ -37,4 +37,14 @@ public class Sorting {
 		arr.set(pos1, arr.get(pos2));
 		arr.set(pos2, temp);		
 	}
+
+	public static void bubbleSort(List<Movie> array, Comparator<Movie> comp) {
+		for( int i=0; i < array.size() - 1; i++ ) {
+            for( int j = array.size() - 1; j > i; j-- ) {
+                if( comp.compare( array.get(j), array.get(j - 1 )) < 0 )
+                    swap( array, j, j - 1 );
+            }
+        }
+		
+	}
 }

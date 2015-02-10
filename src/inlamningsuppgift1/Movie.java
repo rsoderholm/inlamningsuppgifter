@@ -70,15 +70,15 @@ public class Movie implements Comparable <Movie> {
 	}
 	
 	private int recursiveCompare(Movie movie, int index){
-		if(title.length()<=index){
-			return -1;
-		}else if(movie.getTitle().length()<=index){
-			return 1;
+		if(movie.getTitle().length() <= index){
+			return 0;
+		}else if( this.getTitle().length() <= index){
+			return 0;
 		}
 		
-		if(title.charAt(index)<movie.getTitle().charAt(index)){
+		if(title.charAt(index) < movie.getTitle().charAt(index)){
 			return -1;
-		}else if(title.charAt(index)>movie.getTitle().charAt(index)){
+		}else if(title.charAt(index) > movie.getTitle().charAt(index)){
 			return 1;
 		}else{
 			recursiveCompare(movie, index+1);

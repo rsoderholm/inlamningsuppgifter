@@ -30,7 +30,7 @@ public class DiscRegister {
 		try {
 			while ((line = br.readLine()) != null) {
 
-				String[] part = line.split(",");
+				String[] part = line.split("<&>");
 				String[] actors = part[4].split("_");
 
 				movieArr.add(new Movie(part[0], part[1], part[2], part[3],
@@ -39,7 +39,9 @@ public class DiscRegister {
 			br.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "File could not be loaded");
-		} catch (NumberFormatException e){
+		} catch (NumberFormatException e ){
+			JOptionPane.showMessageDialog(null, "File is not correctly formatted or corrupt");
+		} catch (ArrayIndexOutOfBoundsException e){
 			JOptionPane.showMessageDialog(null, "File is not correctly formatted or corrupt");
 		}
 	}
@@ -52,18 +54,18 @@ public class DiscRegister {
 			for(int i = 0; i < movieArr.size(); i++){
 				String str = "";
 				Movie movie = movieArr.get(i);
-				str += movie.getTitle() + "," + movie.getGenre() + "," + 
-						movie.getType() + "," + movie.getDirector() + ",";
+				str += movie.getTitle() + "<&>" + movie.getGenre() + "<&>" + 
+						movie.getType() + "<&>" + movie.getDirector() + "<&>";
 				
 				String[] actors = movie.getActors();
 				for(int act = 0; act < actors.length; act++){
 					if(act < actors.length-1){
 						str += actors[act] + "_";
 					}else{
-						str += actors[act] + ",";
+						str += actors[act] + "<&>";
 					}
 				}				
-				str += movie.getLength() + "," + movie.getRating();
+				str += movie.getLength() + "<&>" + movie.getRating();
 				writer.write(str);
 				writer.newLine();
 			}
