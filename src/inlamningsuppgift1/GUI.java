@@ -329,7 +329,7 @@ public class GUI extends JPanel {
 						c = c.getParent();
 					}
 					Frame topFrame = (Frame) c;
-					topFrame.setTitle(fc.getName(file));
+					topFrame.setTitle("Inlämningsuppgift 1 - "+ fc.getName(file));
 				}
 
 			} else if (menuRefresh == e.getSource()) {
