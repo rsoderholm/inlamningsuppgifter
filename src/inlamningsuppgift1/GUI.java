@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class GUI extends JPanel {
@@ -202,6 +203,7 @@ public class GUI extends JPanel {
 		// Main Panel
 		add(pnlCenter, BorderLayout.CENTER);
 		add(pnlNorth, BorderLayout.NORTH);
+		add(Box.createRigidArea(new Dimension(1, 5)), BorderLayout.SOUTH);
 
 		// ActionListeners
 		btnListener = new ButtonListener();
@@ -231,19 +233,44 @@ public class GUI extends JPanel {
 
 	public void update() {
 		movieList.removeAll();
-		if (controller.getlistAsText() != null)
-			movieList.setListData(controller.getlistAsText());
+		if (controller.getlist().size() > 0)
+			movieList.setListData(movieToText(controller.getlist()));
+		else
+			movieList.setListData(new String[0]);
+		
 		tfSearch.setEnabled(true);
 		btnSearch.setEnabled(true);
 		btnGoBack.setEnabled(false);
 	}
 
-	public void popup(Movie movie) {
+	public void infoPopup(Movie movie) {
 		JFrame frame = new JFrame("Info");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.add(new MovieInfoPanel(movie, GUI.this));
+		frame.add(new MovieInfoPanel(movie, GUI.this, controller));
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	public void addMoviePopup(){
+		JFrame frame = new JFrame("Add New Movie");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.add(new AddMoviePanel(GUI.this, controller));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	public String[] movieToText(ArrayList<Movie> movieArr){
+		if (!(movieArr.isEmpty())) {			
+			String str[] = new String[movieArr.size()];
+			
+			for (int i = 0; i < movieArr.size(); i++) {
+				str[i] = movieArr.get(i).getTitle() + "[" + movieArr.get(i).getType()
+						+ "]";
+			}
+			return str;
+		}else{
+			return new String[0];
+		}
 	}
 
 	private class SelectionListener implements ListSelectionListener {
@@ -382,13 +409,13 @@ public class GUI extends JPanel {
 			} else if (menuEditInfo == e.getSource()) {
 				int selected = movieList.getSelectedIndex();
 				if (selected >= 0 && btnSearch.isEnabled()) {
-					popup(controller.getMovie(selected));
+					infoPopup(controller.getMovie(selected));
 				} else if (selected >= 0 && !(btnSearch.isEnabled())) {
-					popup(controller.getMovieSearch(selected));
+					infoPopup(controller.getMovieSearch(selected));
 				}
 
 			} else if (menuNewMovie == e.getSource()) {
-				popup(controller.addMovie());
+				addMoviePopup();;
 				update();
 
 			} else if (menuEditDelete == e.getSource()) {
@@ -421,9 +448,9 @@ public class GUI extends JPanel {
 				String[] str = null;
 				
 				if(rbMenuLinear.isSelected())
-					str = controller.linearSearch(tfSearch.getText());
+					str = movieToText(controller.linearSearch(tfSearch.getText()));
 				else if(rbMenuBinary.isSelected())
-					str = controller.binarySearch(tfSearch.getText());
+					str = movieToText(controller.binarySearch(tfSearch.getText()));
 				
 				if (str != null)
 					movieList.setListData(str);

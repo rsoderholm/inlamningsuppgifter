@@ -3,15 +3,15 @@ package inlamningsuppgift1;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 
 public class DiscRegister {
-	private List<Movie> movieArr = new ArrayList<Movie>();
+	private ArrayList<Movie> movieArr = new ArrayList<Movie>();
 
-	public List<Movie> getArray() {
+	public ArrayList<Movie> getArray() {
 		return movieArr;
 	}
 
@@ -20,14 +20,10 @@ public class DiscRegister {
 		
 		BufferedReader br = null;
 		try {
-			br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);		
 		
-		String line;
+			String line;		
 		
-		try {
 			while ((line = br.readLine()) != null) {
 
 				String[] part = line.split("<&>");

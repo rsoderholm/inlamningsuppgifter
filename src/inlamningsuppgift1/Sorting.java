@@ -1,15 +1,25 @@
 package inlamningsuppgift1;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class Sorting {
 
-	public static void quickSort(List<Movie> arr, Comparator<Movie> comp) {
+	public static void quickSort(ArrayList<Movie> arr, Comparator<Movie> comp) {
 		quickSort(arr, 0, arr.size() - 1, comp);
 	}
+	
+	public static void bubbleSort(ArrayList<Movie> array, Comparator<Movie> comp) {
+		for( int i=0; i < array.size() - 1; i++ ) {
+            for( int j = array.size() - 1; j > i; j-- ) {
+                if( comp.compare( array.get(j), array.get(j - 1 )) < 0 )
+                    swap( array, j, j - 1 );
+            }
+        }
+		
+	}
 
-	private static void quickSort(List<Movie> arr, int left, int right, Comparator<Movie> comp) {
+	private static void quickSort(ArrayList<Movie> arr, int left, int right, Comparator<Movie> comp) {
 		int pivotIndex;
 		if (left < right) {
 			pivotIndex = partition(arr, left, right, (left + right) / 2, comp);
@@ -18,7 +28,7 @@ public class Sorting {
 		}
 	}
 
-	private static int partition(List<Movie> arr, int left, int right, int pivotIndex, Comparator<Movie> comp) {
+	private static int partition(ArrayList<Movie> arr, int left, int right, int pivotIndex, Comparator<Movie> comp) {
 		Movie pivotValue = arr.get(pivotIndex);
 		int storeIndex = left;
 		swap(arr, pivotIndex, right);
@@ -32,19 +42,11 @@ public class Sorting {
 		return storeIndex;
 	}
 
-	private static void swap(List<Movie> arr, int pos1, int pos2) {
+	private static void swap(ArrayList<Movie> arr, int pos1, int pos2) {
 		Movie temp = arr.get(pos1);
 		arr.set(pos1, arr.get(pos2));
 		arr.set(pos2, temp);		
 	}
 
-	public static void bubbleSort(List<Movie> array, Comparator<Movie> comp) {
-		for( int i=0; i < array.size() - 1; i++ ) {
-            for( int j = array.size() - 1; j > i; j-- ) {
-                if( comp.compare( array.get(j), array.get(j - 1 )) < 0 )
-                    swap( array, j, j - 1 );
-            }
-        }
-		
-	}
+	
 }
