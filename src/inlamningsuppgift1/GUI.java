@@ -323,12 +323,8 @@ public class GUI extends JPanel {
 
 					menuSave.setEnabled(true);
 					menuRefresh.setEnabled(true);
-
-					Component c = getParent();
-					while (c.getParent() != null) {
-						c = c.getParent();
-					}
-					Frame topFrame = (Frame) c;
+					
+					Frame topFrame = (Frame)getTopLevelAncestor();
 					topFrame.setTitle("Inlämningsuppgift 1 - "+ fc.getName(file));
 				}
 
@@ -349,12 +345,8 @@ public class GUI extends JPanel {
 					controller.saveFile(file);
 					menuSave.setEnabled(true);
 					menuRefresh.setEnabled(true);
-
-					Component c = getParent();
-					while (c.getParent() != null) {
-						c = c.getParent();
-					}
-					Frame topFrame = (Frame) c;
+					
+					Frame topFrame = (Frame)getTopLevelAncestor();
 					topFrame.setTitle(fc.getName(file));
 				}
 
