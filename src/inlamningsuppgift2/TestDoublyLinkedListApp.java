@@ -1,6 +1,7 @@
 package inlamningsuppgift2;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,8 +18,11 @@ public class TestDoublyLinkedListApp extends JPanel {
 	private SelectionListener listListener;
 	private JScrollPane spStringList;
 	private JList<String> stringList;
-	private JButton btnAddLast, btnAddFirst, btnRemoveFirst, btnRemoveLast;
-	private JTextField tfAddLast, tfAddFirst;
+	private JButton btnAddLast, btnAddFirst, btnRemoveFirst, btnRemoveLast,
+			btnAddSelected, btnRemoveSelected;
+	private JTextField textfield;
+	private JLabel lblFirst, lblLast;
+	private Font font;
 	private JPanel pnlNorth, pnlSouth;
 
 	public TestDoublyLinkedListApp() {
@@ -34,31 +38,44 @@ public class TestDoublyLinkedListApp extends JPanel {
 		btnAddLast = new JButton("Add last in list");
 		btnRemoveFirst = new JButton("Remove first in list");
 		btnRemoveLast = new JButton("Remove last in list");
+		btnAddSelected = new JButton("Add at selected");
+		btnRemoveSelected = new JButton("Remove selected");
 
 		btnAddFirst.addActionListener(btnListener);
 		btnAddLast.addActionListener(btnListener);
 		btnRemoveFirst.addActionListener(btnListener);
 		btnRemoveLast.addActionListener(btnListener);
+		btnAddSelected.addActionListener(btnListener);
+		btnRemoveSelected.addActionListener(btnListener);
 
-		tfAddFirst = new JTextField("Enter text to inject");
-		tfAddLast = new JTextField("Enter text to inject");
+		textfield = new JTextField("Enter text to inject");
 
 		pnlNorth = new JPanel();
 		pnlNorth.setLayout(new BoxLayout(pnlNorth, BoxLayout.X_AXIS));
 		pnlNorth.add(btnAddFirst);
-		pnlNorth.add(tfAddFirst);
+		pnlNorth.add(btnAddLast);
+		pnlNorth.add(btnAddSelected);
+		pnlNorth.add(textfield);
 		pnlNorth.add(btnRemoveFirst);
+		pnlNorth.add(btnRemoveLast);
+		pnlNorth.add(btnRemoveSelected);
+		
+		font = new Font(Font.SANS_SERIF, Font.PLAIN, 20);
+		
+		lblFirst = new JLabel("First element: ");
+		lblLast = new JLabel("Last element: ");
+		
+		lblFirst.setFont(font);
+		lblLast.setFont(font);
 
 		pnlSouth = new JPanel();
-		pnlSouth.setLayout(new BoxLayout(pnlSouth, BoxLayout.X_AXIS));
-		pnlSouth.add(btnAddLast);
-		pnlSouth.add(tfAddLast);
-		pnlSouth.add(btnRemoveLast);
+		pnlSouth.setLayout(new BoxLayout(pnlSouth, BoxLayout.Y_AXIS));
+		pnlSouth.add(lblFirst);
+		pnlSouth.add(lblLast);
 
 		add(pnlNorth, BorderLayout.NORTH);
 		add(spStringList, BorderLayout.CENTER);
 		add(pnlSouth, BorderLayout.SOUTH);
-
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -66,13 +83,25 @@ public class TestDoublyLinkedListApp extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == btnAddFirst) {
-				list.addFirst(tfAddFirst.getText());
+				list.addFirst(textfield.getText());
+				
 			} else if (e.getSource() == btnAddLast) {
-				list.addLast(tfAddLast.getText());
+				list.addLast(textfield.getText());
+				
+			} else if (e.getSource() == btnAddSelected) {
+				if (stringList.getSelectedIndex() > -1)
+					list.add(stringList.getSelectedIndex(), textfield.getText());
+				
 			} else if (e.getSource() == btnRemoveFirst) {
-				tfAddFirst.setText(list.removeFirst());
+				textfield.setText(list.removeFirst());
+				
 			} else if (e.getSource() == btnRemoveLast) {
-				tfAddLast.setText(list.removeLast());
+				textfield.setText(list.removeLast());
+				
+			} else if (e.getSource() == btnRemoveSelected) {
+				if (stringList.getSelectedIndex() > -1)
+					textfield
+							.setText(list.remove(stringList.getSelectedIndex()));
 			}
 
 			listModel.clear();
@@ -85,6 +114,8 @@ public class TestDoublyLinkedListApp extends JPanel {
 			}
 
 			stringList.setModel(listModel);
+			lblFirst.setText("First element: " + list.getFirst());
+			lblLast.setText("Last element: " + list.getLast());
 
 		}
 
