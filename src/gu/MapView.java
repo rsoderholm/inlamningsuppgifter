@@ -12,7 +12,7 @@ public class MapView extends JLabel {
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
-        setIcon(new ImageIcon(mapfile));
+        setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(mapfile))));
     }
 
     public void showRoads(ArrayList<Road> roads) {
