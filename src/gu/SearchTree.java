@@ -46,11 +46,18 @@ public class SearchTree {
 	
 	// TODO
 	public Node locate(String key) {
-		if (root == null) {
-			return null;
-		} else {
-			return null;
-		}		
+		//skapa res för att minska kod
+		int res;
+		Node node = root;
+		//om res == 0, hittad. 
+		while((node != null) && (res = node.key.compareTo(key)) != 0 ) {
+			if( res > 0 ) {
+				node = node.left;
+			} else {
+				node = node.right;
+			}
+		}
+		return node; 
 	}
 	
 	public Place get(String key) {
