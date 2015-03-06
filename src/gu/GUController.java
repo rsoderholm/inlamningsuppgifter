@@ -16,6 +16,7 @@ public class GUController {
 	private String imagePath;
 	private Position mapLeftUp;
 	private Position mapRightDown;
+	private SearchTree search;
 
 	public GUController(String imagePath, Position mapLeftUp,
 			Position mapRightDown, String placesPath, String roadsPath) {
@@ -75,5 +76,6 @@ public class GUController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		search = new SearchTree(places);
 	}
 }

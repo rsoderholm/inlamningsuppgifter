@@ -4,21 +4,23 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 public class InterfaceMain {
 	private MapView map;
 
 	public InterfaceMain(String imagePath, Position mapLeftUp, Position mapRightDown) {
 		JFrame frame = new JFrame("Test window");
-		JPanel panel = new JPanel();
+		JPanel mapPanel = new JPanel();
+		JTabbedPane tabPane = new JTabbedPane();
 
 		map = new MapView(imagePath, mapLeftUp.getLongitude(),
 				mapLeftUp.getLatitude(), mapRightDown.getLongitude(),
 				mapRightDown.getLatitude());
-		panel.add(map);
-		
+		mapPanel.add(map);
+		tabPane.addTab("Map", mapPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
+		frame.add(tabPane);
 		frame.pack();
 		frame.setVisible(true);
 	}
