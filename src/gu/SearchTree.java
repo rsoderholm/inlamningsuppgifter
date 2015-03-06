@@ -61,7 +61,11 @@ public class SearchTree {
 	}
 	
 	public Place get(String key) {
-		return locate(key).data;
+		Node node = locate(key);
+		if(node != null) {
+			return node.data;
+		}
+		return null;
 	}
 
 	private class Node {
