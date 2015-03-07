@@ -17,6 +17,8 @@ public class GUController {
 	private Position mapLeftUp;
 	private Position mapRightDown;
 	private SearchTree search;
+	private Graph<String> graph;
+	private GraphSearch graphsearch;
 
 	public GUController(String imagePath, Position mapLeftUp,
 			Position mapRightDown, String placesPath, String roadsPath) {
@@ -32,6 +34,39 @@ public class GUController {
 	
 	public void showAllRoads(){
 		window.showRoads(roads);
+	}
+	
+	public void searchDepthFirst(String from, String to){
+		ArrayList<Edge<String>> path;
+	    if (graph.containsVertex(from)) {
+	        path = GraphSearch.depthFirstSearch(graph, from, to);
+	        for (Edge<String> edge : path) {
+	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
+	        }
+	        window.showRoads(roads);
+	    }
+	}
+	
+	public void searchBreadthFirst(String from, String to){
+		ArrayList<Edge<String>> path;
+	    if (graph.containsVertex(from)) {
+	        path = GraphSearch.breadthFirstSearch(graph, from, to);
+	        for (Edge<String> edge : path) {
+	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
+	        }
+	        window.showRoads(roads);
+	    }
+	}
+	
+	public void searchDijkstra(String from, String to){
+		ArrayList<Edge<String>> path;
+	    if (graph.containsVertex(from)) {
+	        path = GraphSearch.dijkstraSearch(graph, from, to);
+	        for (Edge<String> edge : path) {
+	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
+	        }
+	        window.showRoads(roads);
+	    }
 	}
 
 	public void loadFiles() {

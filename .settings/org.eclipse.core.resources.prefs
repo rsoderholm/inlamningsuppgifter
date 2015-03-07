@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
+encoding//src/gu/Edge.java=UTF-8
+encoding//src/gu/Graph.java=UTF-8
+encoding//src/gu/GraphSearch.java=UTF-8
 encoding//src/gu/SearchTree.java=UTF-8
 encoding//src/res/places.txt=ISO-8859-1
 encoding//src/res/roads.txt=ISO-8859-1
