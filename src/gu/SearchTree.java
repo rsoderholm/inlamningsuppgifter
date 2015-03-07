@@ -5,17 +5,26 @@ import java.util.Iterator;
 
 public class SearchTree {
 	private Node root;
-
+	private int size = 0;
+	
 	public SearchTree(ArrayList<Place> places) {
 		Iterator<Place> iter = places.iterator();
 		while (iter.hasNext()) {
 			put((Place) iter.next());
 		}
 	}
-
+	
+	public int size() {
+		if(root == null) {
+			return 0;
+		}
+		return root.size();
+	}
+	
 	public void put(Place place) {
 		if (root == null) {
 			root = new Node(place, null, null);
+			size++;
 		} else {
 			Node newNode = new Node(place, null, null);
 			Node temp = root;
@@ -35,7 +44,7 @@ public class SearchTree {
 						temp = temp.right;
 					}					
 				}
-			}
+			} size++;
 		}
 	}
 	
@@ -46,7 +55,7 @@ public class SearchTree {
 	
 	// TODO
 	public Node locate(String key) {
-		//skapa res f�r att minska kod
+		//skapa res för att minska kod
 		int res;
 		Node node = root;
 		//om res == 0, hittad. 
@@ -66,6 +75,11 @@ public class SearchTree {
 			return node.data;
 		}
 		return null;
+		//return locate(key).data; 			//locate(key) kan returnera null och det går inte att hämta data från null
+	}
+	
+	public void print() {
+		root.print();
 	}
 
 	private class Node {
@@ -81,6 +95,30 @@ public class SearchTree {
 			this.key = data.getName();
 		}
 
+		/**
+		 * Antalet element i trädet är 1 + antalet element i det vänstra subträdet + 
+		 * antalet element i det högra subträdet
+		 * @return
+		 */
+		public int size() {
+	        int leftS = 0, rightS = 0;
+	        if( left != null )
+	            leftS = left.size();
+	        if( right != null )
+	            rightS = right.size();
+	        return 1 + leftS + rightS;
+	    }
+		
+		/**
+		 * Inorder traversal
+		 */
+		public void print() {
+	        if( left != null)
+	            left.print();
+	        System.out.println(key + ": " + data.getArea());
+	        if( right != null )
+	            right.print();
+	    }
 		@SuppressWarnings("unused")
 		public int compareTo(Node newNode) {
 			return key.compareTo(newNode.key);
