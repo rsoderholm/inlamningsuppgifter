@@ -11,14 +11,14 @@ public class GUController {
 	private InterfaceMain window;
 	private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Road> roads = new ArrayList<Road>();
+	private Graph<String> graph = new Graph<String>();
 	private String placesPath;
 	private String roadsPath;
 	private String imagePath;
 	private Position mapLeftUp;
 	private Position mapRightDown;
 	private SearchTree search;
-	private Graph<String> graph;
-	private GraphSearch graphsearch;
+	
 
 	public GUController(String imagePath, Position mapLeftUp,
 			Position mapRightDown, String placesPath, String roadsPath) {
@@ -27,55 +27,62 @@ public class GUController {
 		this.imagePath = imagePath;
 		this.mapLeftUp = mapLeftUp;
 		this.mapRightDown = mapRightDown;
-		
-		window = new InterfaceMain(this.imagePath, this.mapLeftUp, this.mapRightDown);
-		
+
+		window = new InterfaceMain(this.imagePath, this.mapLeftUp,
+				this.mapRightDown);
+
 	}
-	
-	public void showAllRoads(){
+
+	public void showAllRoads() {
 		window.showRoads(roads);
 	}
-	
-	public void searchDepthFirst(String from, String to){
+
+	public void searchDepthFirst(String from, String to) {
 		ArrayList<Edge<String>> path;
-	    if (graph.containsVertex(from)) {
-	        path = GraphSearch.depthFirstSearch(graph, from, to);
-	        for (Edge<String> edge : path) {
-	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
-	        }
-	        window.showRoads(roads);
-	    }
+		if (graph.containsVertex(from)) {
+			path = GraphSearch.depthFirstSearch(graph, from, to);
+			for (Edge<String> edge : path) {
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+						+ edge.getTo())));
+			}
+			window.showRoads(roads);
+		}
 	}
-	
-	public void searchBreadthFirst(String from, String to){
+
+	public void searchBreadthFirst(String from, String to) {
 		ArrayList<Edge<String>> path;
-	    if (graph.containsVertex(from)) {
-	        path = GraphSearch.breadthFirstSearch(graph, from, to);
-	        for (Edge<String> edge : path) {
-	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
-	        }
-	        window.showRoads(roads);
-	    }
+		if (graph.containsVertex(from)) {
+			path = GraphSearch.breadthFirstSearch(graph, from, to);
+			for (Edge<String> edge : path) {
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+						+ edge.getTo())));
+			}
+			window.showRoads(roads);
+		}
 	}
-	
-	public void searchDijkstra(String from, String to){
+
+	public void searchDijkstra(String from, String to) {
 		ArrayList<Edge<String>> path;
-	    if (graph.containsVertex(from)) {
-	        path = GraphSearch.dijkstraSearch(graph, from, to);
-	        for (Edge<String> edge : path) {
-	            roads.add(roads.get(Integer.parseInt(edge.getFrom()+"-"+edge.getTo())));
-	        }
-	        window.showRoads(roads);
-	    }
+		if (graph.containsVertex(from)) {
+			path = GraphSearch.dijkstraSearch(graph, from, to);
+			for (Edge<String> edge : path) {
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+						+ edge.getTo())));
+			}
+			window.showRoads(roads);
+		}
 	}
 
 	public void loadFiles() {
 		BufferedReader br = null;
-		File roadsFile = new File(this.getClass().getResource(roadsPath).getPath());
-		File placesFile = new File(this.getClass().getResource(placesPath).getPath());
+		File roadsFile = new File(this.getClass().getResource(roadsPath)
+				.getPath());
+		File placesFile = new File(this.getClass().getResource(placesPath)
+				.getPath());
 
 		try {
-			br = Files.newBufferedReader(placesFile.toPath(), StandardCharsets.ISO_8859_1);
+			br = Files.newBufferedReader(placesFile.toPath(),
+					StandardCharsets.ISO_8859_1);
 
 			String line;
 
