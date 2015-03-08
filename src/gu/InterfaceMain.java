@@ -30,7 +30,8 @@ public class InterfaceMain {
 	private JButton btnSearch = new JButton("Search"), btnGoBack = new JButton("Go Back");
 	private JTextField tfSearch = new JTextField();
 	private JList<String> placesList = new JList<String>();
-	private ArrayList<Place> places = new ArrayList<Place>();
+	private ArrayList<Place> allPlaces = new ArrayList<Place>();
+	private ArrayList<Place> searchPlaces = new ArrayList<Place>();
 
 	public InterfaceMain(String imagePath, Position mapLeftUp,
 			Position mapRightDown, GUController controller) {
@@ -78,7 +79,7 @@ public class InterfaceMain {
 	}
 	
 	public String[] placeToText(ArrayList<Place> placeArr){
-		if (!(placeArr.isEmpty())) {			
+		if (placeArr.size() != 0) {			
 			String str[] = new String[placeArr.size()];
 			
 			for (int i = 0; i < placeArr.size(); i++) {
@@ -89,13 +90,22 @@ public class InterfaceMain {
 			return new String[0];
 		}
 	}
+	
+	public void search(){
+		searchPlaces.clear();
+		Place searchResult = controller.searchPlace(tfSearch.getText());
+		if(searchResult != null)
+			searchPlaces.add(searchResult);
+		placesList.removeAll();
+		placesList.setListData(placeToText(searchPlaces));
+	}
 
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource() == btnSearch){
-				JOptionPane.showMessageDialog(frame, "Detta funkar inte ännu!");
+				search();
 			}
 		}
 	}
@@ -110,12 +120,10 @@ public class InterfaceMain {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if(e.getExtendedKeyCode() == KeyEvent.VK_ENTER && tfSearch.isFocusOwner()){
-				places.add(controller.searchPlace(tfSearch.getText()));
-				placesList.removeAll();
-				placesList.setListData(placeToText(places));
+				search();
 				
 			} else if(e.getExtendedKeyCode() == KeyEvent.VK_ENTER && placesList.isFocusOwner()){
-				JOptionPane.showMessageDialog(frame, places.get(placesList.getSelectedIndex()));
+				JOptionPane.showMessageDialog(frame, searchPlaces.get(placesList.getSelectedIndex()));
 			}
 			
 		}
