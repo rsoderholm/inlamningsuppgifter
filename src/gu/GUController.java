@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-
 
 public class GUController {
 	private InterfaceMain window;
@@ -49,40 +46,37 @@ public class GUController {
 
 	public void searchDepthFirst(String from, String to) {
 		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
 		if (graph.containsVertex(from)) {
 			path = GraphSearch.depthFirstSearch(graph, from, to);
 			for (Edge<String> edge : path) {
-				tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
 						+ edge.getTo())));
 			}
-			window.showRoads(tempRoads);
+			window.showRoads(roads);
 		}
 	}
 
 	public void searchBreadthFirst(String from, String to) {
 		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
 		if (graph.containsVertex(from)) {
 			path = GraphSearch.breadthFirstSearch(graph, from, to);
 			for (Edge<String> edge : path) {
-				tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
 						+ edge.getTo())));
 			}
-			window.showRoads(tempRoads);
+			window.showRoads(roads);
 		}
 	}
 
 	public void searchDijkstra(String from, String to) {
 		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
 		if (graph.containsVertex(from)) {
 			path = GraphSearch.dijkstraSearch(graph, from, to);
 			for (Edge<String> edge : path) {
-			tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
+				roads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
 						+ edge.getTo())));
 			}
-			window.showRoads(tempRoads);
+			window.showRoads(roads);
 		}
 	}
 
@@ -132,18 +126,5 @@ public class GUController {
 			e.printStackTrace();
 		}
 		search = new SearchTree(places);
-	}
-	
-	
-	public void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
-		Iterator<Road> values = roads.iterator();
-		Road road;
-		for (Place place : places) {
-			graph.addVertex(place.getName());
-		}
-		while (values.hasNext()) {
-			road = values.next();
-			graph.addEdge(road.getFrom(), road.getTo(), road.getCost());
-		}
 	}
 }
