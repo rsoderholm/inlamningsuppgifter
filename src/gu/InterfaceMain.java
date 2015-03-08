@@ -19,6 +19,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 public class InterfaceMain {
+	private GUController controller;
 	private MapView map;
 	private ButtonListener btnListener = new ButtonListener();
 	private KeyBoardListener keyListener = new KeyBoardListener();
@@ -28,20 +29,20 @@ public class InterfaceMain {
 	private JScrollPane mapScrollPane;
 	private JButton btnSearch = new JButton("Search"), btnGoBack = new JButton("Go Back");
 	private JTextField tfSearch = new JTextField();
-	private JList<Place> placesList = new JList<Place>();
+	private JList<String> placesList = new JList<String>();
+	private ArrayList<Place> places = new ArrayList<Place>();
 
 	public InterfaceMain(String imagePath, Position mapLeftUp,
-			Position mapRightDown) {
+			Position mapRightDown, GUController controller) {
 		
+		this.controller = controller;
 		// The Map Panel
 		map = new MapView(imagePath, mapLeftUp.getLongitude(),
 				mapLeftUp.getLatitude(), mapRightDown.getLongitude(),
 				mapRightDown.getLatitude());
 		
-		mapScrollPane = new JScrollPane(map);
 		mapPanel.setLayout(new BoxLayout(mapPanel, BoxLayout.Y_AXIS));
-		mapPanel.add(mapScrollPane);
-		mapPanel.add(Box.createGlue());
+		mapPanel.add(map);
 		mainTabPane.addTab("Route Search", mapPanel);
 		
 		// Button Panel
@@ -50,24 +51,43 @@ public class InterfaceMain {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(btnGoBack);		
 		buttonPanel.add(btnSearch);
-		tfSearch.addKeyListener(keyListener);
 		buttonPanel.add(tfSearch);
 		
 		// The Search panel
 		searchPanel.setLayout(new BorderLayout());
-		searchPanel.add(buttonPanel, BorderLayout.NORTH);
+		searchPanel.add(buttonPanel, BorderLayout.SOUTH);
 		searchPanel.add(placesList, BorderLayout.CENTER);
+		
 		mainTabPane.addTab("City search", searchPanel);
 
 		// Main frame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(mainTabPane);
 		frame.pack();
+		frame.setResizable(false);
 		frame.setVisible(true);
+		
+		// Actionlisteners etc..
+		btnSearch.addActionListener(btnListener);
+		placesList.addKeyListener(keyListener);
+		tfSearch.addKeyListener(keyListener);
 	}
 
 	public void showRoads(ArrayList<Road> roads) {
 		map.showRoads(roads);
+	}
+	
+	public String[] placeToText(ArrayList<Place> placeArr){
+		if (!(placeArr.isEmpty())) {			
+			String str[] = new String[placeArr.size()];
+			
+			for (int i = 0; i < placeArr.size(); i++) {
+				str[i] = placeArr.get(i).getName();
+			}
+			return str;
+		}else{
+			return new String[0];
+		}
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -89,8 +109,13 @@ public class InterfaceMain {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if(e.getExtendedKeyCode() == KeyEvent.VK_ENTER){
-				JOptionPane.showMessageDialog(frame, "Detta funkar inte ännu!");
+			if(e.getExtendedKeyCode() == KeyEvent.VK_ENTER && tfSearch.isFocusOwner()){
+				places.add(controller.searchPlace(tfSearch.getText()));
+				placesList.removeAll();
+				placesList.setListData(placeToText(places));
+				
+			} else if(e.getExtendedKeyCode() == KeyEvent.VK_ENTER && placesList.isFocusOwner()){
+				JOptionPane.showMessageDialog(frame, places.get(placesList.getSelectedIndex()));
 			}
 			
 		}

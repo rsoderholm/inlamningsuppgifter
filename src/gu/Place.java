@@ -31,6 +31,6 @@ public class Place {
 	}
 
 	public String toString() {
-        return name;
+        return name + "\n" + position + "\n" + area + " hektar\n" + population + " habitants";
     }
 }

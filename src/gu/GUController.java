@@ -29,12 +29,19 @@ public class GUController {
 		this.mapRightDown = mapRightDown;
 
 		window = new InterfaceMain(this.imagePath, this.mapLeftUp,
-				this.mapRightDown);
+				this.mapRightDown, this);
 
 	}
 
+	public ArrayList<Place> getPlaces(){
+		return places;
+	}
 	public void showAllRoads() {
 		window.showRoads(roads);
+	}
+	
+	public Place searchPlace(String key){
+		return search.get(key);
 	}
 
 	public void searchDepthFirst(String from, String to) {
