@@ -130,6 +130,7 @@ public class GUController {
 			e.printStackTrace();
 		}
 		search = new SearchTree(places);
+		window.setPlaces(places);
 	}
 	
 	public void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
