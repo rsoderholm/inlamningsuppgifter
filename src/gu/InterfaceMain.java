@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -21,7 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
@@ -37,6 +41,8 @@ public class InterfaceMain {
 			routeChoicePanel = new JPanel(), specialMapPanel = new JPanel(),
 			fromToLabelPanel = new JPanel(), fromToComboPanel = new JPanel();
 	private JTabbedPane mainTabPane = new JTabbedPane();
+	private JScrollPane mapScrollPane, textScrollPane;
+	private JSplitPane splitPane;
 	private JButton btnSearchCity = new JButton("Search"),
 			btnGoBack = new JButton("Go Back"), btnSearchRoute = new JButton(
 					"Search");
@@ -48,6 +54,7 @@ public class InterfaceMain {
 	private JRadioButton rbDepth = new JRadioButton("Deep Search"),
 			rbWidth = new JRadioButton("Wide Search"),
 			rbDijkstra = new JRadioButton("Dijkstra");
+	private JTextArea taRoute = new JTextArea();
 
 	private ArrayList<Place> allPlaces = new ArrayList<Place>();
 	private ArrayList<Place> searchPlaces = new ArrayList<Place>();
@@ -105,11 +112,17 @@ public class InterfaceMain {
 		specialMapPanel.setLayout(new BoxLayout(specialMapPanel,
 				BoxLayout.X_AXIS));
 		specialMapPanel.add(map);
+		mapScrollPane = new JScrollPane(specialMapPanel);
+
+		// The Text Route Panel
+		textScrollPane = new JScrollPane(taRoute);
 
 		mapPanel.setLayout(new BorderLayout());
-		mapPanel.add(specialMapPanel, BorderLayout.CENTER);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapScrollPane,
+				textScrollPane);
+		mapPanel.add(splitPane, BorderLayout.CENTER);
 		mapPanel.add(buttonRoutePanel, BorderLayout.SOUTH);
-		mainTabPane.addTab("Route Search", mapPanel);
+		mainTabPane.addTab("Route Map", mapPanel);
 
 		// Button Panel
 		btnGoBack.setEnabled(false);
@@ -131,14 +144,29 @@ public class InterfaceMain {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(mainTabPane);
 		frame.pack();
-		frame.setResizable(false);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 
 		// Actionlisteners etc..
 		btnSearchCity.addActionListener(btnListener);
 		btnGoBack.addActionListener(btnListener);
+		btnSearchRoute.addActionListener(btnListener);
 		placesList.addKeyListener(keyListener);
 		tfSearch.addKeyListener(keyListener);
+		placesList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 2) {
+					if (!(btnSearchCity.isEnabled())) {
+						JOptionPane.showMessageDialog(frame,
+								searchPlaces.get(placesList.getSelectedIndex()));
+					} else {
+						JOptionPane.showMessageDialog(frame,
+								allPlaces.get(placesList.getSelectedIndex()));
+					}
+				}
+			}
+		});
 	}
 
 	public void setPlaces(ArrayList<Place> places) {
@@ -184,11 +212,26 @@ public class InterfaceMain {
 				search();
 				btnGoBack.setEnabled(true);
 				btnSearchCity.setEnabled(false);
-			} else if(e.getSource() == btnGoBack){
+			} else if (e.getSource() == btnGoBack) {
 				btnGoBack.setEnabled(false);
 				btnSearchCity.setEnabled(true);
 				placesList.removeAll();
 				placesList.setListData(placeToText(allPlaces));
+			} else if (e.getSource() == btnSearchRoute) {
+				if (rbDepth.isSelected()) {
+					JOptionPane.showMessageDialog(frame, "Det funkar");
+					controller.searchDepthFirst(
+							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
+							cbTo.getItemAt(cbTo.getSelectedIndex()));
+				} else if (rbWidth.isSelected()) {
+					controller.searchBreadthFirst(
+							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
+							cbTo.getItemAt(cbTo.getSelectedIndex()));
+				} else if (rbDijkstra.isSelected()) {
+					controller.searchDijkstra(
+							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
+							cbTo.getItemAt(cbTo.getSelectedIndex()));
+				}
 			}
 		}
 	}
