@@ -34,9 +34,12 @@ public class TestSearchTree {
 		
 		
 		tree.print();
-		System.out.println(tree.get("Landskrona"));
-		System.out.print(tree.size());
-		
+//		System.out.println(tree.get("Landskrona"));
+		System.out.println();
+		System.out.println(tree.size());
+		tree.remove("Tyringe");
+		tree.print();
+		System.out.println(tree.size());
 		
 	}
 }
