@@ -1,7 +1,9 @@
 package gu;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 
 public class SearchTree {
@@ -22,20 +24,21 @@ public class SearchTree {
 	}
 
 	public void put(Place place) {
+		Collator collator = Collator.getInstance(new Locale("sv", "se"));
 		if (root == null) {
 			root = new Node(place, null, null);
 		} else {
 			Node newNode = new Node(place, null, null);
 			Node temp = root;
 			while (temp != null) {
-				if (temp.key.compareTo(newNode.key) > 0) {
+				if (collator.compare(temp.key, newNode.key) > 0) {
 					if (temp.left == null) {
 						temp.left = newNode;
 						temp = null;
 					} else {
 						temp = temp.left;
 					}
-				} else if (temp.key.compareTo(newNode.key) < 0) {
+				} else if (collator.compare(temp.key, newNode.key) < 0) {
 					if (temp.right == null) {
 						temp.right = newNode;
 						temp = null;
@@ -53,7 +56,7 @@ public class SearchTree {
 		int res;
 		Node node = root;
 		// om res == 0, hittad.
-		while ((node != null) && (res = node.key.compareTo(key)) != 0) {
+		while ((node != null) && (res = node.key.toLowerCase().compareTo(key.toLowerCase())) != 0) {
 			if (res > 0) {
 				node = node.left;
 			} else {
@@ -75,24 +78,17 @@ public class SearchTree {
 	
 	public ArrayList<Place> getAll() {
 		ArrayList<Place> list = new ArrayList<Place>();
-		Node temp = root;
-		if(temp == null) {
-			list = null;
-		}
-		while(temp != null) {
-			if(temp.left == null) {
-				list.add(temp.left.data);
-			}
-			list.add(temp.data);
-		}
-			
-			
-			list.add(get(root.left.key));
-		if (root.right != null)
-			list.add(get(root.right.key));
-		return list;
+		return getAll(list, root);
 	}
 	
+	private ArrayList<Place> getAll(ArrayList<Place> list, Node node) {
+		if(node.left != null) 
+			getAll(list, node.left);
+		list.add(node.data);
+		if(node.right != null)
+			getAll(list, node.right);
+		return list;
+	}
 	
 
 	public Place remove(String key) {
@@ -194,14 +190,6 @@ public class SearchTree {
 		public void setRight(Node node) {
 			this.right = node;
 		}
-//		
-//		public Place get() {
-//			if (left != null)
-//				left.get();
-//				
-//			if (root.right != null);
-//				
-//		}
 		
 		@SuppressWarnings("unused")
 		public int compareTo(Node newNode) {

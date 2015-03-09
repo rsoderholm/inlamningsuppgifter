@@ -37,9 +37,12 @@ public class TestSearchTree {
 //		System.out.println(tree.get("Landskrona"));
 		System.out.println();
 		System.out.println(tree.size());
-		tree.remove("Tyringe");
+		tree.remove("Mariestad");
 		tree.print();
 		System.out.println(tree.size());
 		
+		ArrayList<Place> list = tree.getAll();
+		
+		System.out.println(list);
 	}
 }

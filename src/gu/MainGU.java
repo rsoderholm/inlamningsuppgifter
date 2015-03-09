@@ -24,7 +24,7 @@ public class MainGU {
 				GUController controller = new GUController("/res/skane.JPG", mapLeftUp, mapRightDown,
 						         "/res/places.txt","/res/roads.txt");
 				controller.loadFiles();
-				controller.showAllRoads();
+//				controller.showAllRoads();
 			}
 		});
 	}

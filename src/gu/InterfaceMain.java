@@ -181,10 +181,13 @@ public class InterfaceMain {
 
 	public void setPlaces(ArrayList<Place> places) {
 		this.allPlaces = places;
+		cbFrom.removeAllItems();
+		cbTo.removeAllItems();
 		for (int i = 0; i < places.size(); i++) {
 			cbFrom.addItem(places.get(i).getName());
 			cbTo.addItem(places.get(i).getName());
 		}
+		placesList.removeAll();
 		placesList.setListData(placeToText(places));
 	}
 
@@ -222,6 +225,7 @@ public class InterfaceMain {
 						"Are you sure you want to remove:\n"
 								+ allPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
 					// TODO
+					controller.removePlace(placesList.getSelectedValue());
 				}
 			} else {
 				if (JOptionPane.showConfirmDialog(
@@ -229,6 +233,7 @@ public class InterfaceMain {
 						"Are you sure you want to remove:\n"
 								+ searchPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
 					// TODO
+					controller.removePlace(placesList.getSelectedValue());
 				}
 			}
 		}

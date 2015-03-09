@@ -34,9 +34,6 @@ public class GUController {
 
 	}
 
-	public ArrayList<Place> getPlaces(){
-		return places;
-	}
 	public void showAllRoads() {
 		window.showRoads(roads);
 	}
@@ -44,6 +41,16 @@ public class GUController {
 	public Place searchPlace(String key){
 		return search.get(key);
 	}
+	
+	public ArrayList<Place> getAllPlaces() {
+		return search.getAll();
+	}
+	
+	public void removePlace(String key) {
+		search.remove(key);
+		window.setPlaces(getAllPlaces());
+	}
+	
 
 	public void searchDepthFirst(String from, String to) {
 		ArrayList<Edge<String>> path;
@@ -130,7 +137,7 @@ public class GUController {
 			e.printStackTrace();
 		}
 		search = new SearchTree(places);
-		window.setPlaces(places);
+		window.setPlaces(getAllPlaces());
 	}
 	
 	public void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
