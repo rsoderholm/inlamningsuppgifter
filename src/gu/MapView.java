@@ -4,7 +4,11 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class MapView extends JLabel {
-    private double x1, y1, x2, y2;
+    /**
+	 * Swing needs this because...
+	 */
+	private static final long serialVersionUID = 8195371222771980767L;
+	private double x1, y1, x2, y2;
     private ArrayList<Road> roadsToShow = new ArrayList<Road>();
 
     public MapView(String mapfile, double x1, double y1, double x2, double y2) {

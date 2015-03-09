@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -27,14 +26,16 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class InterfaceMain {
 	private GUController controller;
 	private MapView map;
 	private ButtonListener btnListener = new ButtonListener();
 	private KeyBoardListener keyListener = new KeyBoardListener();
-	private JFrame frame = new JFrame("Test window");
+	private ListListener listListener = new ListListener();
+	private JFrame frame = new JFrame("Scania Search");
 	private JPanel mapPanel = new JPanel(), searchCityPanel = new JPanel(),
 			buttonCityPanel = new JPanel(), buttonRoutePanel = new JPanel(),
 			radioButtonPanel = new JPanel(), routeOptionsPanel = new JPanel(),
@@ -45,7 +46,8 @@ public class InterfaceMain {
 	private JSplitPane splitPane;
 	private JButton btnSearchCity = new JButton("Search"),
 			btnGoBack = new JButton("Go Back"), btnSearchRoute = new JButton(
-					"Search");
+					"Search"), btnAddCity = new JButton("Add City"),
+			btnRemoveCity = new JButton("Remove City");
 	private JTextField tfSearch = new JTextField();
 	private JList<String> placesList = new JList<String>();
 	private JLabel lblFrom = new JLabel("From "), lblTo = new JLabel("To");
@@ -132,6 +134,9 @@ public class InterfaceMain {
 		buttonCityPanel.add(btnGoBack);
 		buttonCityPanel.add(btnSearchCity);
 		buttonCityPanel.add(tfSearch);
+		buttonCityPanel.add(btnAddCity);
+		buttonCityPanel.add(btnRemoveCity);
+		btnRemoveCity.setEnabled(false);
 
 		// The City Search panel
 		searchCityPanel.setLayout(new BorderLayout());
@@ -151,8 +156,13 @@ public class InterfaceMain {
 		btnSearchCity.addActionListener(btnListener);
 		btnGoBack.addActionListener(btnListener);
 		btnSearchRoute.addActionListener(btnListener);
+		btnAddCity.addActionListener(btnListener);
+		btnRemoveCity.addActionListener(btnListener);
+
 		placesList.addKeyListener(keyListener);
 		tfSearch.addKeyListener(keyListener);
+
+		placesList.addListSelectionListener(listListener);
 		placesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -182,7 +192,7 @@ public class InterfaceMain {
 		map.showRoads(roads);
 	}
 
-	public String[] placeToText(ArrayList<Place> placeArr) {
+	private String[] placeToText(ArrayList<Place> placeArr) {
 		if (placeArr.size() != 0) {
 			String str[] = new String[placeArr.size()];
 
@@ -195,13 +205,37 @@ public class InterfaceMain {
 		}
 	}
 
-	public void search() {
+	private void search() {
 		searchPlaces.clear();
 		Place searchResult = controller.searchPlace(tfSearch.getText());
 		if (searchResult != null)
 			searchPlaces.add(searchResult);
 		placesList.removeAll();
 		placesList.setListData(placeToText(searchPlaces));
+	}
+	
+	private void remove() {
+		if (placesList.getSelectedIndex() != -1) {
+			if (btnSearchCity.isEnabled()) {
+				if (JOptionPane.showConfirmDialog(
+						frame,
+						"Are you sure you want to remove:\n"
+								+ allPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
+					// TODO
+				}
+			} else {
+				if (JOptionPane.showConfirmDialog(
+						frame,
+						"Are you sure you want to remove:\n"
+								+ searchPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
+					// TODO
+				}
+			}
+		}
+	}
+	
+	private void add(){
+		
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -212,26 +246,34 @@ public class InterfaceMain {
 				search();
 				btnGoBack.setEnabled(true);
 				btnSearchCity.setEnabled(false);
+
 			} else if (e.getSource() == btnGoBack) {
 				btnGoBack.setEnabled(false);
 				btnSearchCity.setEnabled(true);
 				placesList.removeAll();
 				placesList.setListData(placeToText(allPlaces));
+
 			} else if (e.getSource() == btnSearchRoute) {
 				if (rbDepth.isSelected()) {
 					JOptionPane.showMessageDialog(frame, "Det funkar");
 					controller.searchDepthFirst(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
 							cbTo.getItemAt(cbTo.getSelectedIndex()));
+
 				} else if (rbWidth.isSelected()) {
 					controller.searchBreadthFirst(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
 							cbTo.getItemAt(cbTo.getSelectedIndex()));
+
 				} else if (rbDijkstra.isSelected()) {
 					controller.searchDijkstra(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
 							cbTo.getItemAt(cbTo.getSelectedIndex()));
 				}
+			} else if (e.getSource() == btnRemoveCity) {
+				remove();
+			} else if (e.getSource() == btnAddCity) {
+				add();
 			}
 		}
 	}
@@ -259,6 +301,9 @@ public class InterfaceMain {
 					JOptionPane.showMessageDialog(frame,
 							allPlaces.get(placesList.getSelectedIndex()));
 				}
+			} else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE
+					&& placesList.isFocusOwner()) {
+				remove();
 			}
 
 		}
@@ -266,5 +311,19 @@ public class InterfaceMain {
 		@Override
 		public void keyReleased(KeyEvent e) {
 		}
+	}
+
+	public class ListListener implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			if (placesList.getSelectedIndex() == -1) {
+				btnRemoveCity.setEnabled(false);
+			} else {
+				btnRemoveCity.setEnabled(true);
+			}
+
+		}
+
 	}
 }
