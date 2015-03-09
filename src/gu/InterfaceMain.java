@@ -161,8 +161,11 @@ public class InterfaceMain {
 
 		placesList.addKeyListener(keyListener);
 		tfSearch.addKeyListener(keyListener);
+		btnGoBack.addKeyListener(keyListener);
+		btnSearchCity.addKeyListener(keyListener);
 
 		placesList.addListSelectionListener(listListener);
+		
 		placesList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -215,8 +218,9 @@ public class InterfaceMain {
 			searchPlaces.add(searchResult);
 		placesList.removeAll();
 		placesList.setListData(placeToText(searchPlaces));
+		btnGoBack.requestFocus();
 	}
-	
+
 	private void remove() {
 		if (placesList.getSelectedIndex() != -1) {
 			if (btnSearchCity.isEnabled()) {
@@ -231,16 +235,17 @@ public class InterfaceMain {
 				if (JOptionPane.showConfirmDialog(
 						frame,
 						"Are you sure you want to remove:\n"
-								+ searchPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
+								+ searchPlaces.get(placesList
+										.getSelectedIndex())) == JOptionPane.YES_OPTION) {
 					// TODO
 					controller.removePlace(placesList.getSelectedValue());
 				}
 			}
 		}
 	}
-	
-	private void add(){
-		
+
+	private void add() {
+		JOptionPane.showMessageDialog(frame, "Tycker du verkligen det är nödvändigt?");
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -260,7 +265,6 @@ public class InterfaceMain {
 
 			} else if (e.getSource() == btnSearchRoute) {
 				if (rbDepth.isSelected()) {
-					JOptionPane.showMessageDialog(frame, "Det funkar");
 					controller.searchDepthFirst(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
 							cbTo.getItemAt(cbTo.getSelectedIndex()));
@@ -291,24 +295,48 @@ public class InterfaceMain {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER
-					&& tfSearch.isFocusOwner()) {
-				search();
-				btnGoBack.setEnabled(true);
-				btnSearchCity.setEnabled(false);
-
-			} else if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER
-					&& placesList.isFocusOwner()) {
-				if (!(btnSearchCity.isEnabled())) {
-					JOptionPane.showMessageDialog(frame,
-							searchPlaces.get(placesList.getSelectedIndex()));
-				} else {
-					JOptionPane.showMessageDialog(frame,
-							allPlaces.get(placesList.getSelectedIndex()));
+			if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER) {
+				if (tfSearch.isFocusOwner()) {
+					search();
+					btnGoBack.setEnabled(true);
+					btnSearchCity.setEnabled(false);
+				} else if (placesList.isFocusOwner()) {
+					if (!(btnSearchCity.isEnabled())) {
+						JOptionPane
+								.showMessageDialog(frame, searchPlaces
+										.get(placesList.getSelectedIndex()));
+					} else {
+						JOptionPane.showMessageDialog(frame,
+								allPlaces.get(placesList.getSelectedIndex()));
+					}
+				} else if (btnGoBack.isFocusOwner()){
+					btnGoBack.setEnabled(false);
+					btnSearchCity.setEnabled(true);
+					placesList.removeAll();
+					placesList.setListData(placeToText(allPlaces));
+				} else if (btnSearchCity.isFocusOwner()){
+					search();
+					btnGoBack.setEnabled(true);
+					btnSearchCity.setEnabled(false);
 				}
+
 			} else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE
 					&& placesList.isFocusOwner()) {
 				remove();
+
+			} else if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE
+					&& mainTabPane.getSelectedIndex() == 1
+					&& !(tfSearch.hasFocus())) {
+
+				if (btnSearchCity.isEnabled()) {
+					mainTabPane.setSelectedIndex(0);
+
+				} else {
+					btnGoBack.setEnabled(false);
+					btnSearchCity.setEnabled(true);
+					placesList.removeAll();
+					placesList.setListData(placeToText(allPlaces));
+				}
 			}
 
 		}

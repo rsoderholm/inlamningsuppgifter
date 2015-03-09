@@ -53,41 +53,20 @@ public class GUController {
 	
 
 	public void searchDepthFirst(String from, String to) {
-		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
 		if (graph.containsVertex(from)) {
-			path = GraphSearch.depthFirstSearch(graph, from, to);
-			for (Edge<String> edge : path) {
-				tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
-						+ edge.getTo())));
-			}
-			window.showRoads(tempRoads);
+			window.showRoads(convertEdgeToRoad(GraphSearch.depthFirstSearch(graph, from, to)));
 		}
 	}
 
 	public void searchBreadthFirst(String from, String to) {
-		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
 		if (graph.containsVertex(from)) {
-			path = GraphSearch.breadthFirstSearch(graph, from, to);
-			for (Edge<String> edge : path) {
-				tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
-						+ edge.getTo())));
-			}
-			window.showRoads(tempRoads);
+			window.showRoads(convertEdgeToRoad(GraphSearch.breadthFirstSearch(graph, from, to)));
 		}
 	}
 
-	public void searchDijkstra(String from, String to) {
-		ArrayList<Edge<String>> path;
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
+	public void searchDijkstra(String from, String to) {		
 		if (graph.containsVertex(from)) {
-			path = GraphSearch.dijkstraSearch(graph, from, to);
-			for (Edge<String> edge : path) {
-				tempRoads.add(roads.get(Integer.parseInt(edge.getFrom() + "-"
-						+ edge.getTo())));
-			}
-			window.showRoads(tempRoads);
+			window.showRoads(convertEdgeToRoad(GraphSearch.dijkstraSearch(graph, from, to)));
 		}
 	}
 
@@ -136,11 +115,31 @@ public class GUController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// Create the binary search tree
 		search = new SearchTree(places);
-		window.setPlaces(getAllPlaces());
+		// Get the sorted list from the search tree
+		places = getAllPlaces();
+		// Place the list in the graphical user interface
+		window.setPlaces(places);
+		// Fill the graph object with all data available
+		makeGraph(places, roads);
 	}
 	
-	public void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
+	private ArrayList<Road> convertEdgeToRoad(ArrayList<Edge<String>> path){
+		ArrayList<Road> tempRoads = new ArrayList<Road>();
+		Road temp;
+		for (Edge<String> edge : path) {
+			for(int i = 0; i < roads.size(); i++){
+				temp = roads.get(i);
+				if(temp.getFrom().equals(edge.getFrom()) && temp.getTo().equals(edge.getTo())){
+					tempRoads.add(temp);
+				}
+			}
+		}
+		return tempRoads;
+	}
+	
+	private void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
 		Iterator<Road> values = roads.iterator();
 		Road road;
 		for (Place place : places) {
