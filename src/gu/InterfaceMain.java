@@ -63,7 +63,7 @@ public class InterfaceMain {
 	private ArrayList<Place> allPlaces = new ArrayList<Place>();
 	private ArrayList<Place> searchPlaces = new ArrayList<Place>();
 
-	public InterfaceMain(String imagePath, Position mapLeftUp,
+	public InterfaceMain(String imagePath, String iconPath, Position mapLeftUp,
 			Position mapRightDown, GUController controller) {
 
 		this.controller = controller;
@@ -148,7 +148,7 @@ public class InterfaceMain {
 		mainTabPane.addTab("City search", searchCityPanel);
 
 		// Main frame
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/icon.jpg")));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(iconPath)));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(mainTabPane);
 		frame.pack();

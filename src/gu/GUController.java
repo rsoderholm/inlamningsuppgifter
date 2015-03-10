@@ -6,71 +6,60 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class GUController {
 	private InterfaceMain window;
-	private ArrayList<Place> places = new ArrayList<Place>();
-	private ArrayList<Road> roads = new ArrayList<Road>();
-	private Graph<String> graph = new Graph<String>();
-	private String placesPath;
-	private String roadsPath;
-	private String imagePath;
-	private Position mapLeftUp;
-	private Position mapRightDown;
+	private ArrayList<Place> placesList = new ArrayList<Place>();
+	private ArrayList<Road> roadsList = new ArrayList<Road>();
+	private Graph<Place> graph = new Graph<Place>();
+	private HashMap<String, Place> placeHash = new HashMap<String, Place>();
+	private HashMap<String, Road> roadHash = new HashMap<String, Road>();
 	private SearchTree search;
-	
 
 	public GUController(String imagePath, Position mapLeftUp,
-			Position mapRightDown, String placesPath, String roadsPath) {
-		this.placesPath = placesPath;
-		this.roadsPath = roadsPath;
-		this.imagePath = imagePath;
-		this.mapLeftUp = mapLeftUp;
-		this.mapRightDown = mapRightDown;
+			Position mapRightDown, String placesPath, String roadsPath, String iconPath) {
 
-		window = new InterfaceMain(this.imagePath, this.mapLeftUp,
-				this.mapRightDown, this);
-
+		window = new InterfaceMain(imagePath, iconPath, mapLeftUp, mapRightDown, this);
+		loadFiles(roadsPath, placesPath);
 	}
 
-	public void showAllRoads() {
-		window.showRoads(roads);
-	}
-	
-	public Place searchPlace(String key){
+	public Place searchPlace(String key) {
 		return search.get(key);
 	}
-	
+
 	public ArrayList<Place> getAllPlaces() {
 		return search.getAll();
 	}
-	
+
 	public void removePlace(String key) {
 		search.remove(key);
 		window.setPlaces(getAllPlaces());
 	}
-	
 
 	public void searchDepthFirst(String from, String to) {
-		if (graph.containsVertex(from)) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.depthFirstSearch(graph, from, to)));
+		if (graph.containsVertex(placeHash.get(from))) {
+			window.showRoads(convertEdgeToRoad(GraphSearch.depthFirstSearch(
+					graph, placeHash.get(from), placeHash.get(to))));
 		}
 	}
 
 	public void searchBreadthFirst(String from, String to) {
-		if (graph.containsVertex(from)) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.breadthFirstSearch(graph, from, to)));
+		if (graph.containsVertex(placeHash.get(from))) {
+			window.showRoads(convertEdgeToRoad(GraphSearch.breadthFirstSearch(
+					graph, placeHash.get(from), placeHash.get(to))));
 		}
 	}
 
-	public void searchDijkstra(String from, String to) {		
-		if (graph.containsVertex(from)) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.dijkstraSearch(graph, from, to)));
+	public void searchDijkstra(String from, String to) {
+		if (graph.containsVertex(placeHash.get(from))) {
+			window.showRoads(convertEdgeToRoad(GraphSearch.dijkstraSearch(
+					graph, placeHash.get(from), placeHash.get(to))));
 		}
 	}
 
-	public void loadFiles() {
+	public void loadFiles(String roadsPath, String placesPath) {
 		BufferedReader br = null;
 		File roadsFile = new File(this.getClass().getResource(roadsPath)
 				.getPath());
@@ -82,16 +71,20 @@ public class GUController {
 					StandardCharsets.ISO_8859_1);
 
 			String line;
+			Place tempPlace;
+			Road tempRoad;
 
 			while ((line = br.readLine()) != null) {
 				if (line.charAt(0) == '/') {
 				} else {
 					String[] placeArray = line.split(" ");
-					places.add(new Place(placeArray[0], Double
-							.parseDouble(placeArray[2]), Double
-							.parseDouble(placeArray[1]), Double
-							.parseDouble(placeArray[3]), Integer
-							.parseInt(placeArray[4])));
+					tempPlace = new Place(placeArray[0],
+							Double.parseDouble(placeArray[2]),
+							Double.parseDouble(placeArray[1]),
+							Double.parseDouble(placeArray[3]),
+							Integer.parseInt(placeArray[4]));
+					placesList.add(tempPlace);
+					placeHash.put(placeArray[0], tempPlace);
 				}
 			}
 
@@ -107,48 +100,42 @@ public class GUController {
 							.parseDouble(roadProperties[i]), Double
 							.parseDouble(roadProperties[i + 1])));
 				}
-
-				roads.add(new Road(roadProperties[0], roadProperties[1],
-						Integer.parseInt(roadProperties[2]), roadPositions));
+				tempRoad = new Road(roadProperties[0], roadProperties[1],
+						Integer.parseInt(roadProperties[2]), roadPositions);
+				roadsList.add(tempRoad);
+				roadHash.put(tempRoad.getFrom() + tempRoad.getTo(), tempRoad);
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		// Create the binary search tree
-		search = new SearchTree(places);
+		search = new SearchTree(placesList);
 		// Get the sorted list from the search tree
-		places = getAllPlaces();
+		placesList = getAllPlaces();
 		// Place the list in the graphical user interface
-		window.setPlaces(places);
+		window.setPlaces(placesList);
 		// Fill the graph object with all data available
-		makeGraph(places, roads);
-	}
-	
-	private ArrayList<Road> convertEdgeToRoad(ArrayList<Edge<String>> path){
-		ArrayList<Road> tempRoads = new ArrayList<Road>();
-		Road temp;
-		for (Edge<String> edge : path) {
-			for(int i = 0; i < roads.size(); i++){
-				temp = roads.get(i);
-				if(temp.getFrom().equals(edge.getFrom()) && temp.getTo().equals(edge.getTo())){
-					tempRoads.add(temp);
-				}
-			}
-		}
-		return tempRoads;
-	}
-	
-	private void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
-		Iterator<Road> values = roads.iterator();
-		Road road;
-		for (Place place : places) {
-			graph.addVertex(place.getName());
-		}
-		while (values.hasNext()) {
-			road = values.next();
-			graph.addEdge(road.getFrom(), road.getTo(), road.getCost());
-		}
+		makeGraph(placesList, roadsList);
 	}
 
+	private ArrayList<Road> convertEdgeToRoad(ArrayList<Edge<Place>> path) {
+		ArrayList<Road> tempRoadsList = new ArrayList<Road>();
+		for (Edge<Place> road : path) {
+			tempRoadsList.add(roadHash.get(road.getFrom().getName()
+					+ road.getTo().getName()));
+		}
+		return tempRoadsList;
+	}
+
+	private void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
+		for (Place place : places) {
+			graph.addVertex(place);
+		}
+		for (Iterator<Road> it = roads.iterator(); it.hasNext();) {
+			Road temp = it.next();
+			graph.addEdge(placeHash.get(temp.getFrom()),
+					placeHash.get(temp.getTo()), temp.getCost());
+		}
+	}
 }
