@@ -2,6 +2,7 @@ package gu;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -146,6 +148,7 @@ public class InterfaceMain {
 		mainTabPane.addTab("City search", searchCityPanel);
 
 		// Main frame
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/icon.jpg")));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(mainTabPane);
 		frame.pack();
