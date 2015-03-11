@@ -13,6 +13,7 @@ public class GUController {
 	private InterfaceMain window;
 	private ArrayList<Place> placesList = new ArrayList<Place>();
 	private ArrayList<Road> roadsList = new ArrayList<Road>();
+	private ArrayList<Road> printList; 
 	private Graph<Place> graph = new Graph<Place>();
 	private HashMap<String, Place> placeHash = new HashMap<String, Place>();
 	private HashMap<String, Road> roadHash = new HashMap<String, Road>();
@@ -40,22 +41,28 @@ public class GUController {
 
 	public void searchDepthFirst(String from, String to) {
 		if (graph.containsVertex(placeHash.get(from))) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.depthFirstSearch(
-					graph, placeHash.get(from), placeHash.get(to))));
+			printList = convertEdgeToRoad(GraphSearch.depthFirstSearch(
+					graph, placeHash.get(from), placeHash.get(to)));
+			window.showRoads(printList);
+			window.printRoadInfo(printList);
 		}
 	}
 
 	public void searchBreadthFirst(String from, String to) {
 		if (graph.containsVertex(placeHash.get(from))) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.breadthFirstSearch(
-					graph, placeHash.get(from), placeHash.get(to))));
+			printList = convertEdgeToRoad(GraphSearch.breadthFirstSearch(
+					graph, placeHash.get(from), placeHash.get(to)));
+			window.showRoads(printList);
+			window.printRoadInfo(printList);
 		}
 	}
 
 	public void searchDijkstra(String from, String to) {
 		if (graph.containsVertex(placeHash.get(from))) {
-			window.showRoads(convertEdgeToRoad(GraphSearch.dijkstraSearch(
-					graph, placeHash.get(from), placeHash.get(to))));
+			printList = convertEdgeToRoad(GraphSearch.dijkstraSearch(
+					graph, placeHash.get(from), placeHash.get(to)));
+			window.showRoads(printList);
+			window.printRoadInfo(printList);
 		}
 	}
 
