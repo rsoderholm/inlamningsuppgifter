@@ -250,15 +250,19 @@ public class InterfaceMain {
 	public void printRoadInfo(ArrayList<Road> roads) {
 		int totCost = 0;
 		String res = "";
-		res += "Vägbeskrivning " + roads.get(0).getFrom() 
-				+ " till " + roads.get(roads.size()-1).getTo() + "\n\n";
-		for(int i = 0; i < roads.size(); i++) {
-			res += roads.get(i).getFrom() + " --> " + roads.get(i).getTo() 
-					+ ", kostnad = " + roads.get(i).getCost() + "\n";
-			totCost += roads.get(i).getCost();
+		if(roads.size() != 0) {
+			res += "Vägbeskrivning " + roads.get(0).getFrom() 
+					+ " till " + roads.get(roads.size()-1).getTo() + "\n\n";
+			for(int i = 0; i < roads.size(); i++) {
+				res += roads.get(i).getFrom() + " --> " + roads.get(i).getTo() 
+						+ ", kostnad = " + roads.get(i).getCost() + "\n";
+				totCost += roads.get(i).getCost();
 		}
-		res += "\nTotal kostnad för sträckan är: " + totCost; 
-		taRoute.setText(res);
+			res += "\nTotal kostnad för sträckan är: " + totCost; 
+			taRoute.setText(res);
+		} else {
+			taRoute.setText("Du behöver ingen vägbeskrivning. Du är framme!");
+		}
 	}
 
 	private void add() {
