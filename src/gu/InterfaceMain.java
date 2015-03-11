@@ -1,36 +1,20 @@
 package gu;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
+
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
+import javax.swing.*;
 
+/**
+ * Initializing this class will create a graphical user interface for
+ * Gruppuppgift - Objektorienterad datautveckling och datastrukturer
+ * 
+ * @author Jonathan Böcker 2015-03-11
+ *
+ */
 public class InterfaceMain {
 	private GUController controller;
 	private MapView map;
@@ -48,10 +32,9 @@ public class InterfaceMain {
 	private JSplitPane splitPane;
 	private JButton btnSearchCity = new JButton("Search"),
 			btnGoBack = new JButton("Go Back"), btnSearchRoute = new JButton(
-					"Search"), btnAddCity = new JButton("Add City"),
-			btnRemoveCity = new JButton("Remove City");
+					"Search"), btnRemoveCity = new JButton("Remove City");
 	private JTextField tfSearch = new JTextField();
-	private JList<String> placesList = new JList<String>();
+	private JList<String> placesJList = new JList<String>();
 	private JLabel lblFrom = new JLabel("From "), lblTo = new JLabel("To");
 	private JComboBox<String> cbFrom = new JComboBox<String>(),
 			cbTo = new JComboBox<String>();
@@ -61,13 +44,84 @@ public class InterfaceMain {
 	private JTextArea taRoute = new JTextArea();
 
 	private ArrayList<Place> allPlaces = new ArrayList<Place>();
-	private ArrayList<Place> searchPlaces = new ArrayList<Place>();
+	private ArrayList<Place> searchResultPlaces = new ArrayList<Place>();
 
+	/**
+	 * 
+	 * @param imagePath
+	 *            A relative path to the map image
+	 * @param iconPath
+	 *            A relative path to the program icon
+	 * @param mapLeftUp
+	 *            The {@link Position} of the map image upper left coordinates
+	 * @param mapRightDown
+	 *            The {@link Position} of the map image lower left coordinates
+	 * @param controller
+	 *            A {@link Controller} object
+	 */
 	public InterfaceMain(String imagePath, String iconPath, Position mapLeftUp,
 			Position mapRightDown, GUController controller) {
 
 		this.controller = controller;
+		initializeGUI(imagePath, iconPath, mapLeftUp, mapRightDown);
+		setListeners();
+	}
 
+	/**
+	 * Updates the window with provided list of choosable places
+	 * 
+	 * @param places
+	 *            The {@link ArrayList} of {@link Place} objects
+	 */
+	public void setPlaces(ArrayList<Place> places) {
+		this.allPlaces = places;
+		cbFrom.removeAllItems();
+		cbTo.removeAllItems();
+		for (int i = 0; i < places.size(); i++) {
+			cbFrom.addItem(places.get(i).getName());
+			cbTo.addItem(places.get(i).getName());
+		}
+		placesJList.removeAll();
+		placesJList.setListData(placeToText(places));
+	}
+
+	/**
+	 * Displays roads on the map image
+	 * 
+	 * @param roads
+	 *            The {@link ArrayList} of {@link Road} objects
+	 */
+	public void showRoads(ArrayList<Road> roads) {
+		map.showRoads(roads);
+	}
+
+	/**
+	 * Prints out a route with provided {@link Road} list in the TextArea
+	 * 
+	 * @param roads
+	 *            The {@link ArrayList} with {@link Road} objects
+	 */
+	public void printRoadInfo(ArrayList<Road> roads) {
+		int totCost = 0;
+		String res = "";
+		// If size of list is zero there is no need or a route to be dislayed
+		if (roads.size() != 0) {
+			res += "Vägbeskrivning " + roads.get(0).getFrom() + " till "
+					+ roads.get(roads.size() - 1).getTo() + "\n\n";
+			for (int i = 0; i < roads.size(); i++) {
+				res += roads.get(i).getFrom() + " --> " + roads.get(i).getTo()
+						+ ", kostnad = " + roads.get(i).getCost() + "\n";
+				totCost += roads.get(i).getCost();
+			}
+			res += "\nTotal kostnad för sträckan är: " + totCost;
+			taRoute.setText(res);
+		} else {
+			taRoute.setText("Du behöver ingen vägbeskrivning. Du är framme!");
+		}
+	}
+
+	private void initializeGUI(String imagePath, String iconPath,
+			Position mapLeftUp, Position mapRightDown) {
 		// Radio button panel
 		ButtonGroup rbGroup = new ButtonGroup();
 		rbGroup.add(rbDepth);
@@ -84,12 +138,12 @@ public class InterfaceMain {
 		radioButtonPanel.add(rbWidth);
 		radioButtonPanel.add(rbDijkstra);
 
-		// FROM TO Label Panel
+		// FROM-TO Label Panel
 		fromToLabelPanel.setLayout(new GridLayout(2, 1));
 		fromToLabelPanel.add(lblFrom);
 		fromToLabelPanel.add(lblTo);
 
-		// FROM TO Combobox Panel
+		// FROM-TO Combobox Panel
 		fromToComboPanel.setLayout(new GridLayout(2, 1));
 		fromToComboPanel.add(cbFrom);
 		fromToComboPanel.add(cbTo);
@@ -136,71 +190,62 @@ public class InterfaceMain {
 		buttonCityPanel.add(btnGoBack);
 		buttonCityPanel.add(btnSearchCity);
 		buttonCityPanel.add(tfSearch);
-		buttonCityPanel.add(btnAddCity);
 		buttonCityPanel.add(btnRemoveCity);
 		btnRemoveCity.setEnabled(false);
 
 		// The City Search panel
 		searchCityPanel.setLayout(new BorderLayout());
 		searchCityPanel.add(buttonCityPanel, BorderLayout.SOUTH);
-		searchCityPanel.add(placesList, BorderLayout.CENTER);
+		searchCityPanel.add(placesJList, BorderLayout.CENTER);
 
 		mainTabPane.addTab("City search", searchCityPanel);
 
 		// Main frame
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(iconPath)));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(iconPath)));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(mainTabPane);
 		frame.pack();
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
+	}
 
-		// Actionlisteners etc..
+	/*
+	 * Sets all listeners
+	 */
+	private void setListeners() {
 		btnSearchCity.addActionListener(btnListener);
 		btnGoBack.addActionListener(btnListener);
 		btnSearchRoute.addActionListener(btnListener);
-		btnAddCity.addActionListener(btnListener);
 		btnRemoveCity.addActionListener(btnListener);
 
-		placesList.addKeyListener(keyListener);
+		placesJList.addKeyListener(keyListener);
 		tfSearch.addKeyListener(keyListener);
 		btnGoBack.addKeyListener(keyListener);
 		btnSearchCity.addKeyListener(keyListener);
 
-		placesList.addListSelectionListener(listListener);
-		
-		placesList.addMouseListener(new MouseAdapter() {
+		placesJList.addListSelectionListener(listListener);
+
+		// A double click will show information about the place
+		placesJList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
 					if (!(btnSearchCity.isEnabled())) {
-						JOptionPane.showMessageDialog(frame,
-								searchPlaces.get(placesList.getSelectedIndex()));
+						JOptionPane.showMessageDialog(frame, searchResultPlaces
+								.get(placesJList.getSelectedIndex()));
 					} else {
 						JOptionPane.showMessageDialog(frame,
-								allPlaces.get(placesList.getSelectedIndex()));
+								allPlaces.get(placesJList.getSelectedIndex()));
 					}
 				}
 			}
 		});
 	}
 
-	public void setPlaces(ArrayList<Place> places) {
-		this.allPlaces = places;
-		cbFrom.removeAllItems();
-		cbTo.removeAllItems();
-		for (int i = 0; i < places.size(); i++) {
-			cbFrom.addItem(places.get(i).getName());
-			cbTo.addItem(places.get(i).getName());
-		}
-		placesList.removeAll();
-		placesList.setListData(placeToText(places));
-	}
-
-	public void showRoads(ArrayList<Road> roads) {
-		map.showRoads(roads);
-	}
-
+	/*
+	 * Converts an ArrayList of Place objects to a String array
+	 */
 	private String[] placeToText(ArrayList<Place> placeArr) {
 		if (placeArr.size() != 0) {
 			String str[] = new String[placeArr.size()];
@@ -214,65 +259,57 @@ public class InterfaceMain {
 		}
 	}
 
+	/*
+	 * Method that makes a search with the string from the textfield and
+	 * displays the searchresult on the "City Search" tab
+	 */
 	private void search() {
-		searchPlaces.clear();
-		Place searchResult = controller.searchPlace(tfSearch.getText());
-		if (searchResult != null)
-			searchPlaces.add(searchResult);
-		placesList.removeAll();
-		placesList.setListData(placeToText(searchPlaces));
+		searchResultPlaces.clear();
+		Place foundPlace = controller.searchPlace(tfSearch.getText());
+		if (foundPlace != null)
+			searchResultPlaces.add(foundPlace);
+		placesJList.removeAll();
+		placesJList.setListData(placeToText(searchResultPlaces));
 		btnGoBack.requestFocus();
 	}
 
+	/*
+	 * Method removes selected Place and updates the GUI
+	 */
 	private void remove() {
-		if (placesList.getSelectedIndex() != -1) {
+		// Make sure a place is selected
+		if (placesJList.getSelectedIndex() != -1) {
+			// Check if a search has been made
 			if (btnSearchCity.isEnabled()) {
-				if (JOptionPane.showConfirmDialog(
-						frame,
-						"Are you sure you want to remove:\n"
-								+ allPlaces.get(placesList.getSelectedIndex())) == JOptionPane.YES_OPTION) {
-					// TODO
-					controller.removePlace(placesList.getSelectedValue());
+				// Show an "Are you sure?" Dialog
+				if (JOptionPane
+						.showConfirmDialog(
+								frame,
+								"Are you sure you want to remove:\n"
+										+ allPlaces.get(placesJList
+												.getSelectedIndex())) == JOptionPane.YES_OPTION) {
+
+					controller.removePlace(placesJList.getSelectedValue());
 				}
 			} else {
+				// Show an "Are you sure?" Dialog
 				if (JOptionPane.showConfirmDialog(
 						frame,
 						"Are you sure you want to remove:\n"
-								+ searchPlaces.get(placesList
+								+ searchResultPlaces.get(placesJList
 										.getSelectedIndex())) == JOptionPane.YES_OPTION) {
-					// TODO
-					controller.removePlace(placesList.getSelectedValue());
+
+					controller.removePlace(placesJList.getSelectedValue());
 				}
 			}
 		}
-	}
-	
-	public void printRoadInfo(ArrayList<Road> roads) {
-		int totCost = 0;
-		String res = "";
-		if(roads.size() != 0) {
-			res += "Vägbeskrivning " + roads.get(0).getFrom() 
-					+ " till " + roads.get(roads.size()-1).getTo() + "\n\n";
-			for(int i = 0; i < roads.size(); i++) {
-				res += roads.get(i).getFrom() + " --> " + roads.get(i).getTo() 
-						+ ", kostnad = " + roads.get(i).getCost() + "\n";
-				totCost += roads.get(i).getCost();
-		}
-			res += "\nTotal kostnad för sträckan är: " + totCost; 
-			taRoute.setText(res);
-		} else {
-			taRoute.setText("Du behöver ingen vägbeskrivning. Du är framme!");
-		}
-	}
-
-	private void add() {
-		JOptionPane.showMessageDialog(frame, "Tycker du verkligen det är nödvändigt?");
 	}
 
 	private class ButtonListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+
 			if (e.getSource() == btnSearchCity) {
 				search();
 				btnGoBack.setEnabled(true);
@@ -281,8 +318,8 @@ public class InterfaceMain {
 			} else if (e.getSource() == btnGoBack) {
 				btnGoBack.setEnabled(false);
 				btnSearchCity.setEnabled(true);
-				placesList.removeAll();
-				placesList.setListData(placeToText(allPlaces));
+				placesJList.removeAll();
+				placesJList.setListData(placeToText(allPlaces));
 
 			} else if (e.getSource() == btnSearchRoute) {
 				if (rbDepth.isSelected()) {
@@ -302,8 +339,6 @@ public class InterfaceMain {
 				}
 			} else if (e.getSource() == btnRemoveCity) {
 				remove();
-			} else if (e.getSource() == btnAddCity) {
-				add();
 			}
 		}
 	}
@@ -321,28 +356,30 @@ public class InterfaceMain {
 					search();
 					btnGoBack.setEnabled(true);
 					btnSearchCity.setEnabled(false);
-				} else if (placesList.isFocusOwner()) {
+
+				} else if (placesJList.isFocusOwner()) {
 					if (!(btnSearchCity.isEnabled())) {
-						JOptionPane
-								.showMessageDialog(frame, searchPlaces
-										.get(placesList.getSelectedIndex()));
+						JOptionPane.showMessageDialog(frame, searchResultPlaces
+								.get(placesJList.getSelectedIndex()));
 					} else {
 						JOptionPane.showMessageDialog(frame,
-								allPlaces.get(placesList.getSelectedIndex()));
+								allPlaces.get(placesJList.getSelectedIndex()));
 					}
-				} else if (btnGoBack.isFocusOwner()){
+
+				} else if (btnGoBack.isFocusOwner()) {
 					btnGoBack.setEnabled(false);
 					btnSearchCity.setEnabled(true);
-					placesList.removeAll();
-					placesList.setListData(placeToText(allPlaces));
-				} else if (btnSearchCity.isFocusOwner()){
+					placesJList.removeAll();
+					placesJList.setListData(placeToText(allPlaces));
+
+				} else if (btnSearchCity.isFocusOwner()) {
 					search();
 					btnGoBack.setEnabled(true);
 					btnSearchCity.setEnabled(false);
 				}
 
 			} else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE
-					&& placesList.isFocusOwner()) {
+					&& placesJList.isFocusOwner()) {
 				remove();
 
 			} else if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE
@@ -355,8 +392,8 @@ public class InterfaceMain {
 				} else {
 					btnGoBack.setEnabled(false);
 					btnSearchCity.setEnabled(true);
-					placesList.removeAll();
-					placesList.setListData(placeToText(allPlaces));
+					placesJList.removeAll();
+					placesJList.setListData(placeToText(allPlaces));
 				}
 			}
 
@@ -371,7 +408,7 @@ public class InterfaceMain {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-			if (placesList.getSelectedIndex() == -1) {
+			if (placesJList.getSelectedIndex() == -1) {
 				btnRemoveCity.setEnabled(false);
 			} else {
 				btnRemoveCity.setEnabled(true);
