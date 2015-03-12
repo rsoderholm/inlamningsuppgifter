@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.event.*;
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 /**
  * Initializing this class will create a graphical user interface for
@@ -25,7 +26,8 @@ public class InterfaceMain {
 			buttonCityPanel = new JPanel(), buttonRoutePanel = new JPanel(),
 			radioButtonPanel = new JPanel(), routeOptionsPanel = new JPanel(),
 			routeChoicePanel = new JPanel(), specialMapPanel = new JPanel(),
-			fromToLabelPanel = new JPanel(), fromToComboPanel = new JPanel();
+			fromToLabelPanel = new JPanel(), fromToComboPanel = new JPanel(),
+			lookAndFeelPanel = new JPanel();
 	private JTabbedPane mainTabPane = new JTabbedPane();
 	private JScrollPane mapScrollPane, textScrollPane;
 	private JSplitPane splitPane;
@@ -36,7 +38,7 @@ public class InterfaceMain {
 	private JList<String> placesJList = new JList<String>();
 	private JLabel lblFrom = new JLabel("From "), lblTo = new JLabel("To");
 	private JComboBox<String> cbFrom = new JComboBox<String>(),
-			cbTo = new JComboBox<String>();
+			cbTo = new JComboBox<String>(), cbLAF = new JComboBox<String>();
 	private JRadioButton rbDepth = new JRadioButton("Deep Search"),
 			rbWidth = new JRadioButton("Wide Search"),
 			rbDijkstra = new JRadioButton("Dijkstra");
@@ -46,6 +48,7 @@ public class InterfaceMain {
 	private ArrayList<Place> searchResultPlaces = new ArrayList<Place>();
 
 	/**
+	 * Will initialize a graphical user interface
 	 * 
 	 * @param imagePath
 	 *            A relative path to the map image
@@ -144,26 +147,40 @@ public class InterfaceMain {
 		fromToLabelPanel.add(lblTo);
 
 		// FROM-TO Combobox Panel
-		fromToComboPanel.setLayout(new BoxLayout(fromToComboPanel, BoxLayout.Y_AXIS));
+		fromToComboPanel.setLayout(new BoxLayout(fromToComboPanel,
+				BoxLayout.Y_AXIS));
 		fromToComboPanel.add(cbFrom);
+		fromToComboPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 		fromToComboPanel.add(cbTo);
 
 		// Route Choice Panel
-		routeChoicePanel.setLayout(new BoxLayout(routeChoicePanel, BoxLayout.X_AXIS));
+		routeChoicePanel.setLayout(new BoxLayout(routeChoicePanel,
+				BoxLayout.X_AXIS));
 		routeChoicePanel.add(fromToLabelPanel);
 		routeChoicePanel.add(fromToComboPanel);
 
 		// Route Options panel
-		routeOptionsPanel.setLayout(new BoxLayout(routeOptionsPanel, BoxLayout.Y_AXIS));
-		routeOptionsPanel.setBorder(BorderFactory
-				.createTitledBorder("Route"));
+		routeOptionsPanel.setLayout(new BoxLayout(routeOptionsPanel,
+				BoxLayout.Y_AXIS));
+		routeOptionsPanel.setBorder(BorderFactory.createTitledBorder("Route"));
 		routeOptionsPanel.add(routeChoicePanel);
+		routeOptionsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 		routeOptionsPanel.add(btnSearchRoute);
+
+		// Look and Feel panel
+		lookAndFeelPanel.setBorder(BorderFactory
+				.createTitledBorder("Look And Feel"));
+
+		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			cbLAF.addItem(info.getName());
+		}
+
+		lookAndFeelPanel.add(cbLAF);
 
 		// Map Tab ButtonPanel
 		buttonRoutePanel.add(routeOptionsPanel);
 		buttonRoutePanel.add(radioButtonPanel);
-		
+		buttonRoutePanel.add(lookAndFeelPanel);
 
 		// The Map Panel
 		map = new MapView(imagePath, mapLeftUp.getLongitude(),
@@ -228,6 +245,8 @@ public class InterfaceMain {
 		btnSearchCity.addKeyListener(keyListener);
 
 		placesJList.addListSelectionListener(listListener);
+
+		cbLAF.addItemListener(new ItemChangeListener());
 
 		// A double click will show information about the place
 		placesJList.addMouseListener(new MouseAdapter() {
@@ -419,5 +438,29 @@ public class InterfaceMain {
 
 		}
 
+	}
+
+	private class ItemChangeListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent event) {
+			if (event.getStateChange() == ItemEvent.SELECTED) {
+				try {
+					for (LookAndFeelInfo info : UIManager
+							.getInstalledLookAndFeels()) {
+						if (cbLAF.getItemAt(cbLAF.getSelectedIndex()).equals(
+								info.getName())) {
+							int extendedState = frame.getExtendedState();
+							UIManager.setLookAndFeel(info.getClassName());
+							SwingUtilities.updateComponentTreeUI(frame);
+							frame.pack();
+							frame.setExtendedState(extendedState);
+							break;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
