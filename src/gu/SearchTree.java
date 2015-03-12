@@ -84,9 +84,10 @@ public class SearchTree {
 	public Node locate(String key) {
 		// skapa res för att minska kod
 		int res;
+		Collator collator = Collator.getInstance(new Locale("sv", "se"));
 		Node node = root;
 		// om res == 0, hittad.
-		while ((node != null) && (res = node.key.toLowerCase().compareTo(key.toLowerCase())) != 0) {
+		while ((node != null) && (res = collator.compare(node.key.toLowerCase(),key.toLowerCase())) != 0) {
 			if (res > 0) {
 				node = node.left;
 			} else {
