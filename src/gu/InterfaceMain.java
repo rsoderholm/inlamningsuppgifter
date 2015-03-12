@@ -2,7 +2,6 @@ package gu;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import java.util.ArrayList;
 
 import javax.swing.event.*;
@@ -137,6 +136,7 @@ public class InterfaceMain {
 		radioButtonPanel.add(rbDepth);
 		radioButtonPanel.add(rbWidth);
 		radioButtonPanel.add(rbDijkstra);
+		radioButtonPanel.add(Box.createVerticalGlue());
 
 		// FROM-TO Label Panel
 		fromToLabelPanel.setLayout(new GridLayout(2, 1));
@@ -144,24 +144,26 @@ public class InterfaceMain {
 		fromToLabelPanel.add(lblTo);
 
 		// FROM-TO Combobox Panel
-		fromToComboPanel.setLayout(new GridLayout(2, 1));
+		fromToComboPanel.setLayout(new BoxLayout(fromToComboPanel, BoxLayout.Y_AXIS));
 		fromToComboPanel.add(cbFrom);
 		fromToComboPanel.add(cbTo);
 
 		// Route Choice Panel
-		routeChoicePanel.setLayout(new BorderLayout());
-		routeChoicePanel.add(fromToLabelPanel, BorderLayout.WEST);
-		routeChoicePanel.add(fromToComboPanel, BorderLayout.CENTER);
+		routeChoicePanel.setLayout(new BoxLayout(routeChoicePanel, BoxLayout.X_AXIS));
+		routeChoicePanel.add(fromToLabelPanel);
+		routeChoicePanel.add(fromToComboPanel);
 
 		// Route Options panel
-		routeOptionsPanel.setLayout(new BorderLayout());
-		routeOptionsPanel.add(routeChoicePanel, BorderLayout.CENTER);
-		routeOptionsPanel.add(btnSearchRoute, BorderLayout.SOUTH);
+		routeOptionsPanel.setLayout(new BoxLayout(routeOptionsPanel, BoxLayout.Y_AXIS));
+		routeOptionsPanel.setBorder(BorderFactory
+				.createTitledBorder("Route"));
+		routeOptionsPanel.add(routeChoicePanel);
+		routeOptionsPanel.add(btnSearchRoute);
 
 		// Map Tab ButtonPanel
-		buttonRoutePanel.setLayout(new BorderLayout());
-		buttonRoutePanel.add(radioButtonPanel, BorderLayout.EAST);
 		buttonRoutePanel.add(routeOptionsPanel);
+		buttonRoutePanel.add(radioButtonPanel);
+		
 
 		// The Map Panel
 		map = new MapView(imagePath, mapLeftUp.getLongitude(),
@@ -169,6 +171,7 @@ public class InterfaceMain {
 				mapRightDown.getLatitude());
 		specialMapPanel.setLayout(new BoxLayout(specialMapPanel,
 				BoxLayout.X_AXIS));
+		specialMapPanel.add(Box.createVerticalGlue());
 		specialMapPanel.add(map);
 		mapScrollPane = new JScrollPane(specialMapPanel);
 
