@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * InterfaceMain goes through GUController.
  * 
  * @authors Jonathan Böcker, John Tengvall, David Tran
- *
+ * Date: March 13th 2015
  */
 public class GUController {
 	private InterfaceMain window;
