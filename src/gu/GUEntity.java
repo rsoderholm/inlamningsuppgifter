@@ -9,8 +9,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+/**
+ * This class stores the data used the program. 
+ * It is responsible for all calculations and transformations 
+ * of this data. 
+ * 
+ * @authors Jonathan Böcker, John Tengvall, David Tran
+ * Date: March 13th 2015
+ *
+ */
 public class GUEntity {
-
+	
 	private Graph<Place> graph = new Graph<Place>();
 	private HashMap<String, Place> placeHash = new HashMap<String, Place>();
 	private HashMap<String, Road> roadHash = new HashMap<String, Road>();
@@ -19,32 +28,68 @@ public class GUEntity {
 	private ArrayList<Road> printList;
 	private SearchTree search;
 
+	/**
+	 * Searchmethod using DepthFirstSearch. 
+	 * @param from start point
+	 * @param to end point
+	 * @return ArrayList<Road> a list containing the roads between from and to places
+	 */
 	public ArrayList<Road> searchDepthFirst(String from, String to) {
 		printList = convertEdgeToRoad(GraphSearch.depthFirstSearch(graph,
 				placeHash.get(from), placeHash.get(to)));
 		return printList;
 	}
 
+	/**
+	 * Searchmethod using BreadthFirstSearch. 
+	 * 
+	 * @param from start point
+	 * @param to end point
+	 * @return ArrayList<Road> a list containing the roads between from and to places
+	 */
 	public ArrayList<Road> searchBreadthFirst(String from, String to) {
 		printList = convertEdgeToRoad(GraphSearch.breadthFirstSearch(graph,
 				placeHash.get(from), placeHash.get(to)));
 		return printList;
 	}
 
+	/**
+	 * Searchmethod using DepthFirstSearch. 
+	 * @param from start point
+	 * @param to end point
+	 * @return ArrayList<Road> a list containing the roads between from and to places
+	 */
 	public ArrayList<Road> searchDijkstra(String from, String to) {
 		printList = convertEdgeToRoad(GraphSearch.dijkstraSearch(graph,
 				placeHash.get(from), placeHash.get(to)));
 		return printList;
 	}
 	
+	/**
+	 * The method to get att return all Place objects from the binary search tree
+	 * 
+	 * @return ArrayList<Place> a list containing all Place objects in tree
+	 */
 	public ArrayList<Place> getAllPlaces() {
 		return search.getAll();
 	}
 
+	/**
+	 * The method searches for a Place object in the binary search tree 
+	 * using a key and returns the Place object
+	 * 
+	 * @param key the String key look for, city name
+	 * @return Place Place object
+	 */
 	public Place searchPlace(String key) {
 		return search.get(key);
 	}
 
+	/**
+	 * The method removes a Place object in the binary search tree 
+	 * 
+	 * @param key the String key, city name
+	 */
 	public void removePlace(String key) {
 		search.remove(key);
 	}
@@ -132,8 +177,6 @@ public class GUEntity {
 		// Fill the graph object with all data available
 		makeGraph(placesList, roadsList);
 	}
-
-	
 
 	/**
 	 * 
