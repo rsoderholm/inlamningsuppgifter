@@ -30,6 +30,7 @@ public class GUEntity {
 
 	/**
 	 * Searchmethod using DepthFirstSearch. 
+	 * 
 	 * @param from start point
 	 * @param to end point
 	 * @return ArrayList<Road> a list containing the roads between from and to places
@@ -54,7 +55,8 @@ public class GUEntity {
 	}
 
 	/**
-	 * Searchmethod using DepthFirstSearch. 
+	 * Searchmethod using DijskataSearch. 
+	 * 
 	 * @param from start point
 	 * @param to end point
 	 * @return ArrayList<Road> a list containing the roads between from and to places
