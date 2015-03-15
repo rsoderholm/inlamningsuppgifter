@@ -38,8 +38,8 @@ public class GUController {
 	/**
 	 * Method returns place thats been searched for.
 	 * 
-	 * @param key City name
-	 * @return Place Place object
+	 * @param key the String key, city name
+	 * @return ArrayList<Place> Place object
 	 */
 	public Place searchPlace(String key) {
 		return entity.searchPlace(key);
@@ -48,7 +48,7 @@ public class GUController {
 	/**
 	 * Method returns all place object.
 	 * 
-	 * @return Place All place object
+	 * @return ArrayList<Place> All place object
 	 */
 	public ArrayList<Place> getAllPlaces() {
 		return entity.getAllPlaces();
@@ -57,7 +57,7 @@ public class GUController {
 	/**
 	 * Method removes certain place from ArrayList.
 	 * 
-	 * @param key City name
+	 * @param key the String key, city name
 	 */
 	public void removePlace(String key) {
 		entity.removePlace(key);
@@ -68,8 +68,8 @@ public class GUController {
 	 * Method gets Depth Search from entity and prints path on GUI. It also
 	 * prints route in text.
 	 * 
-	 * @param from Start city
-	 * @param to End city
+	 * @param from start point
+	 * @param to End point
 	 */
 	public void searchDepthFirst(String from, String to) {
 		printList = entity.searchDepthFirst(from, to);
@@ -81,8 +81,8 @@ public class GUController {
 	 * Method gets Breadth Search from entity and prints path on GUI. It also
 	 * prints route in text.
 	 * 
-	 * @param from Start city
-	 * @param to End city
+	 * @param from start point
+	 * @param to End point
 	 */
 	public void searchBreadthFirst(String from, String to) {
 		printList = entity.searchBreadthFirst(from, to);
@@ -94,8 +94,8 @@ public class GUController {
 	 * Method gets Dijkstra Search from entity and prints path on GUI. It also
 	 * prints route in text.
 	 * 
-	 * @param from Start city
-	 * @param to End city
+	 * @param from start point
+	 * @param to End point
 	 */
 	public void searchDijkstra(String from, String to) {
 		printList = entity.searchDijkstra(from, to);
