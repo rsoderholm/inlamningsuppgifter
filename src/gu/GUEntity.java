@@ -97,9 +97,10 @@ public class GUEntity {
 	}
 
 	/**
+	 * This method convert an edge Object to an road object.  
 	 * 
-	 * @param path
-	 * @return tempRoadsList
+	 * @param path contains ArrayList with places
+	 * @return tempRoadsList temporary list that contains roads
 	 */
 	private ArrayList<Road> convertEdgeToRoad(ArrayList<Edge<Place>> path) {
 		ArrayList<Road> tempRoadsList = new ArrayList<Road>();
@@ -111,9 +112,10 @@ public class GUEntity {
 	}
 
 	/**
+	 * This method load text files and reads them with a specified pattern. 
 	 * 
-	 * @param roadsPath
-	 * @param placesPath
+	 * @param roadsPath File path for roads text file
+	 * @param placesPath File path for places text file
 	 */
 	public void loadFiles(String roadsPath, String placesPath) {
 		BufferedReader br = null;
@@ -182,8 +184,8 @@ public class GUEntity {
 
 	/**
 	 * 
-	 * @param places
-	 * @param roads
+	 * @param ArrayList<Place> a list containing information about different places.
+	 * @param ArrayList<Road> a list containing the roads between from and to places
 	 */
 	private void makeGraph(ArrayList<Place> places, ArrayList<Road> roads) {
 		for (Place place : places) {
