@@ -29,10 +29,9 @@ public class GUController {
 			Position mapRightDown, String placesPath, String roadsPath,
 			String iconPath) {
 
+		entity.loadFiles(roadsPath, placesPath);
 		window = new InterfaceMain(imagePath, iconPath, mapLeftUp,
 				mapRightDown, this);
-		entity.loadFiles(roadsPath, placesPath);
-		window.setPlaces(entity.getAllPlaces());
 	}
 
 	/**
@@ -55,52 +54,48 @@ public class GUController {
 	}
 
 	/**
-	 * Method removes certain place from ArrayList.
+	 * The method calls for the entity class to remove a Place from list.
 	 * 
 	 * @param key the String key, city name
 	 */
 	public void removePlace(String key) {
 		entity.removePlace(key);
-		window.setPlaces(entity.getAllPlaces());
 	}
 
 	/**
-	 * Method gets Depth Search from entity and prints path on GUI. It also
-	 * prints route in text.
+	 * Method gets Depth Search from entity and returns a list with the roads. 
 	 * 
 	 * @param from start point
 	 * @param to End point
+	 * @return ArrayList<Road> List with the roads
 	 */
-	public void searchDepthFirst(String from, String to) {
+	public ArrayList<Road> searchDepthFirst(String from, String to) {
 		printList = entity.searchDepthFirst(from, to);
-		window.showRoads(printList);
-		window.printRoadInfo(printList);
+		return printList;
 	}
 
 	/**
-	 * Method gets Breadth Search from entity and prints path on GUI. It also
-	 * prints route in text.
+	 * Method gets Breadth Search from entity and returns a list with the roads. 
 	 * 
 	 * @param from start point
 	 * @param to End point
+	 * @return ArrayList<Road> List with the roads
 	 */
-	public void searchBreadthFirst(String from, String to) {
+	public ArrayList<Road> searchBreadthFirst(String from, String to) {
 		printList = entity.searchBreadthFirst(from, to);
-		window.showRoads(printList);
-		window.printRoadInfo(printList);
+		return printList;
 	}
 
 	/**
-	 * Method gets Dijkstra Search from entity and prints path on GUI. It also
-	 * prints route in text.
+	 * Method gets Dijkstra Search from entity and returns a list with the roads. 
 	 * 
 	 * @param from start point
 	 * @param to End point
+	 * @return ArrayList<Road> List with the roads
 	 */
-	public void searchDijkstra(String from, String to) {
+	public ArrayList<Road> searchDijkstra(String from, String to) {
 		printList = entity.searchDijkstra(from, to);
-		window.showRoads(printList);
-		window.printRoadInfo(printList);
+		return printList;
 	}
 
 }

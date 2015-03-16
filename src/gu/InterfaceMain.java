@@ -67,15 +67,16 @@ public class InterfaceMain {
 		this.controller = controller;
 		initializeGUI(imagePath, iconPath, mapLeftUp, mapRightDown);
 		setListeners();
+		setPlaces(controller.getAllPlaces());
 	}
 
-	/**
+	/*
 	 * Updates the window with provided list of choosable places
 	 * 
 	 * @param places
 	 *            The {@link ArrayList} of {@link Place} objects
 	 */
-	public void setPlaces(ArrayList<Place> places) {
+	private void setPlaces(ArrayList<Place> places) {
 		this.allPlaces = places;
 		cbFrom.removeAllItems();
 		cbTo.removeAllItems();
@@ -87,23 +88,24 @@ public class InterfaceMain {
 		placesJList.setListData(placeToText(places));
 	}
 
-	/**
-	 * Displays roads on the map image
+	/*
+	 * Displays roads on the map image and prints out information of the route
 	 * 
 	 * @param roads
 	 *            The {@link ArrayList} of {@link Road} objects
 	 */
-	public void showRoads(ArrayList<Road> roads) {
+	private void showRoads(ArrayList<Road> roads) {
 		map.showRoads(roads);
+		printRoadInfo(roads);
 	}
 
-	/**
+	/*
 	 * Prints out a route with provided {@link Road} list in the TextArea
 	 * 
 	 * @param roads
 	 *            The {@link ArrayList} with {@link Road} objects
 	 */
-	public void printRoadInfo(ArrayList<Road> roads) {
+	private void printRoadInfo(ArrayList<Road> roads) {
 		int totCost = 0;
 		String res = "";
 		// If size of list is zero there is no need or a route to be dislayed
@@ -302,27 +304,11 @@ public class InterfaceMain {
 		// Make sure a place is selected
 		if (placesJList.getSelectedIndex() != -1) {
 			// Check if a search has been made
-			if (btnSearchCity.isEnabled()) {
-				// Show an "Are you sure?" Dialog
-				if (JOptionPane
-						.showConfirmDialog(
-								frame,
-								"Are you sure you want to remove:\n"
-										+ allPlaces.get(placesJList
-												.getSelectedIndex())) == JOptionPane.YES_OPTION) {
-
-					controller.removePlace(placesJList.getSelectedValue());
-				}
-			} else {
-				// Show an "Are you sure?" Dialog
-				if (JOptionPane.showConfirmDialog(
-						frame,
-						"Are you sure you want to remove:\n"
-								+ searchResultPlaces.get(placesJList
-										.getSelectedIndex())) == JOptionPane.YES_OPTION) {
-
-					controller.removePlace(placesJList.getSelectedValue());
-				}
+			// Show an "Are you sure?" Dialog
+			if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to remove:\n"
+							+ placesJList.getSelectedValue()) == JOptionPane.YES_OPTION) {
+				controller.removePlace(placesJList.getSelectedValue());
+				setPlaces(controller.getAllPlaces());
 			}
 		}
 	}
@@ -345,19 +331,19 @@ public class InterfaceMain {
 
 			} else if (e.getSource() == btnSearchRoute) {
 				if (rbDepth.isSelected()) {
-					controller.searchDepthFirst(
+					showRoads(controller.searchDepthFirst(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
-							cbTo.getItemAt(cbTo.getSelectedIndex()));
+							cbTo.getItemAt(cbTo.getSelectedIndex())));
 
 				} else if (rbWidth.isSelected()) {
-					controller.searchBreadthFirst(
+					showRoads(controller.searchBreadthFirst(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
-							cbTo.getItemAt(cbTo.getSelectedIndex()));
+							cbTo.getItemAt(cbTo.getSelectedIndex())));
 
 				} else if (rbDijkstra.isSelected()) {
-					controller.searchDijkstra(
+					showRoads(controller.searchDijkstra(
 							cbFrom.getItemAt(cbFrom.getSelectedIndex()),
-							cbTo.getItemAt(cbTo.getSelectedIndex()));
+							cbTo.getItemAt(cbTo.getSelectedIndex())));
 				}
 			} else if (e.getSource() == btnRemoveCity) {
 				remove();
@@ -387,7 +373,6 @@ public class InterfaceMain {
 						JOptionPane.showMessageDialog(frame,
 								allPlaces.get(placesJList.getSelectedIndex()));
 					}
-
 				} else if (btnGoBack.isFocusOwner()) {
 					btnGoBack.setEnabled(false);
 					btnSearchCity.setEnabled(true);
@@ -403,14 +388,12 @@ public class InterfaceMain {
 			} else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE
 					&& placesJList.isFocusOwner()) {
 				remove();
-
 			} else if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE
 					&& mainTabPane.getSelectedIndex() == 1
 					&& !(tfSearch.hasFocus())) {
 
 				if (btnSearchCity.isEnabled()) {
 					mainTabPane.setSelectedIndex(0);
-
 				} else {
 					btnGoBack.setEnabled(false);
 					btnSearchCity.setEnabled(true);
@@ -418,7 +401,6 @@ public class InterfaceMain {
 					placesJList.setListData(placeToText(allPlaces));
 				}
 			}
-
 		}
 
 		@Override
@@ -435,9 +417,7 @@ public class InterfaceMain {
 			} else {
 				btnRemoveCity.setEnabled(true);
 			}
-
 		}
-
 	}
 
 	private class ItemChangeListener implements ItemListener {
