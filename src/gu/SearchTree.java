@@ -124,6 +124,8 @@ public class SearchTree {
 	 */
 	public ArrayList<Place> getAll() {
 		ArrayList<Place> list = new ArrayList<Place>();
+		if(root == null)
+			return list;
 		return getAll(list, root);
 	}
 	
