@@ -166,7 +166,8 @@ public class SearchTree {
 	 * @return the removed node
 	 */
 	private Node remove(Node node, String key) {
-		int compare = key.compareTo(node.key);
+		Collator collator = Collator.getInstance(new Locale("sv", "se"));
+		int compare = collator.compare(key.toLowerCase(), node.key.toLowerCase());
 		/*if the tree contains the key.
 		 * Depending if the removing node have children or not, 
 		 * different repointings are made. 
