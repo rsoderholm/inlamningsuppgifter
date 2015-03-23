@@ -18,13 +18,10 @@ import java.util.Iterator;
  * Date: March 13th 2015
  *
  */
-public class GUEntity {
-	
+public class GUEntity {	
 	private Graph<Place> graph = new Graph<Place>();
 	private HashMap<String, Place> placeHash = new HashMap<String, Place>();
 	private HashMap<String, Road> roadHash = new HashMap<String, Road>();
-	private ArrayList<Place> placesList = new ArrayList<Place>();
-	private ArrayList<Road> roadsList = new ArrayList<Road>();
 	private ArrayList<Road> printList;
 	private SearchTree search;
 
@@ -118,6 +115,8 @@ public class GUEntity {
 	 * @param placesPath File path for places text file
 	 */
 	public void loadFiles(String roadsPath, String placesPath) {
+		ArrayList<Place> placesList = new ArrayList<Place>();
+		ArrayList<Road> roadsList = new ArrayList<Road>();
 		BufferedReader br = null;
 		File roadsFile = new File(this.getClass().getResource(roadsPath)
 				.getPath());

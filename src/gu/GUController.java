@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * Date: March 13th 2015
  */
 public class GUController {
-	private InterfaceMain window;
 	private ArrayList<Road> printList;
 	private GUEntity entity = new GUEntity();
 
@@ -30,7 +29,7 @@ public class GUController {
 			String iconPath) {
 
 		entity.loadFiles(roadsPath, placesPath);
-		window = new InterfaceMain(imagePath, iconPath, mapLeftUp,
+		new InterfaceMain(imagePath, iconPath, mapLeftUp,
 				mapRightDown, this);
 	}
 
